@@ -6,7 +6,8 @@ import CountDisplay from './CountDisplay';
 
 function App() {
     const dispatch = useDispatch();
-    const currentCount = useSelector((state:any) => state.counter.currentCount);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const currentCount = useSelector((state: any) => state.counter.currentCount);
 
     const handleIncrement = () => {
         dispatch(increment());
@@ -17,17 +18,17 @@ function App() {
     };
 
     return (
-        <div className='text-center bg-rose-950 h-[100vh] pt-16'>
-            <div className='flex items-center justify-center w-[100vw] gap-x-4 mb-10'>
+        <div className="text-center bg-rose-950 h-[100vh] pt-16">
+            <div className="flex items-center justify-center w-[100vw] gap-x-4 mb-10">
                 <button
                     onClick={handleIncrement}
-                    className='text-4xl bg-green-700 p-2 rounded-2xl caret-purple-5 text-white font-bold'
+                    className="text-4xl bg-green-700 p-2 rounded-2xl caret-purple-5 text-white font-bold"
                 >
                     +
                 </button>
                 <button
                     onClick={handleDecrement}
-                    className='text-4xl bg-red-700 p-2 rounded-2xl caret-purple-5 text-white font-bold'
+                    className="text-4xl bg-red-700 p-2 rounded-2xl caret-purple-5 text-white font-bold"
                 >
                     -
                 </button>
