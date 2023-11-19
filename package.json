@@ -9,7 +9,8 @@
         "eject": "react-scripts eject",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "lint:fix": "npm run lint -- --fix",
-        "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
+        "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+        "json-server": "json-server --watch ./src/db/db.json --port 3001"
     },
     "dependencies": {
         "@reduxjs/toolkit": "^1.9.7",
@@ -21,6 +22,7 @@
         "@types/react": "^18.2.37",
         "@types/react-dom": "^18.2.15",
         "autoprefixer": "^10.4.16",
+        "axios": "^1.6.2",
         "postcss": "^8.4.31",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
