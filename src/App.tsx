@@ -1,26 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import CountDisplay from './CountDisplay';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+type State = {
+    currentCount: number;
+};
+
+type Props = {};
+
+class App extends React.Component<Props, State> {
+    state: State = {
+        currentCount: 0,
+    };
+
+    handleIncrement = () => {
+        this.setState((prevState) => ({
+            currentCount: prevState.currentCount + 1,
+        }));
+    };
+
+    handleDecrement = () => {
+        this.setState((prevState) => ({
+            currentCount: prevState.currentCount - 1,
+        }));
+    };
+
+    render() {
+        return (
+            <div className='text-center bg-rose-950 h-[100vh] pt-16'>
+                <div className='flex items-center justify-center w-[100vw] gap-x-4 mb-10'>
+                    <button onClick={this.handleIncrement} className='text-4xl bg-green-700 p-2 rounded-2xl caret-purple-5 text-white font-bold'>+</button>
+                    <button onClick={this.handleDecrement} className='text-4xl bg-red-700 p-2 rounded-2xl caret-purple-5 text-white font-bold'>-</button>
+                </div>
+                <CountDisplay currentCount={this.state.currentCount} />
+            </div>
+        );
+    }
 }
 
 export default App;
