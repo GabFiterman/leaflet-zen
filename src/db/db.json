@@ -1,0 +1,68 @@
+{
+  "pointsOfInterest": [
+    {
+      "id": 1700442424553,
+      "description": "Parque Areião",
+      "latitude": -16.705988517246006,
+      "longitude": -4925644284629296
+    },
+    {
+      "id": 1700442467379,
+      "description": "Bosque dos Buritis",
+      "latitude": -16.67988610230819,
+      "longitude": -49258787102257050
+    },
+    {
+      "id": 1700442501594,
+      "description": "Parque Flamboyant",
+      "latitude": -16.700423742075337,
+      "longitude": -4923878754331669
+    }
+  ],
+  "areasOfInterest": [
+    {
+      "id": 1,
+      "topLeft": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "bottomRight": {
+        "latitude": 38.7749,
+        "longitude": -121.4194
+      },
+      "description": "Area 1"
+    },
+    {
+      "id": 2,
+      "topLeft": {
+        "latitude": 40.7128,
+        "longitude": -74.006
+      },
+      "bottomRight": {
+        "latitude": 41.7128,
+        "longitude": -73.006
+      },
+      "description": "Area 2"
+    }
+  ],
+  "attentionPerimeters": [
+    {
+      "id": 1,
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 5000,
+      "description": "Perimeter 1"
+    },
+    {
+      "id": 2,
+      "center": {
+        "latitude": 40.7128,
+        "longitude": -74.006
+      },
+      "radius": 7000,
+      "description": "Perimeter 2"
+    }
+  ]
+}
