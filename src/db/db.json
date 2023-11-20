@@ -4,25 +4,29 @@
       "id": 1700442424553,
       "description": "Parque Areião",
       "latitude": -16.705988517246006,
-      "longitude": -4925644284629296
+      "longitude": -4925644284629296,
+      "zoomLevel": 14
     },
     {
       "id": 1700442467379,
       "description": "Bosque dos Buritis",
       "latitude": -16.67988610230819,
-      "longitude": -49258787102257050
+      "longitude": -49258787102257050,
+      "zoomLevel": 14
     },
     {
       "id": 1700442501594,
       "description": "Parque Flamboyant",
       "latitude": -16.700423742075337,
-      "longitude": -4923878754331669
+      "longitude": -4923878754331669,
+      "zoomLevel": 14
     },
     {
       "id": 1700498272238,
       "description": "Praça Tamandaré",
       "latitude": -16.68371439628099,
-      "longitude": -49.264401197121124
+      "longitude": -49.264401197121124,
+      "zoomLevel": 14
     }
   ],
   "areasOfInterest": [

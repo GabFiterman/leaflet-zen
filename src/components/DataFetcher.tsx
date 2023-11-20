@@ -13,6 +13,7 @@ interface MyObject {
     description: string;
     latitude: number;
     longitude: number;
+    zoomLevel: number;
 }
 
 const DataFetcher: React.FC<DataFetcherProps> = ({ endpoint }) => {
