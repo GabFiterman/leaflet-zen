@@ -1,9 +1,9 @@
-import counterSlice from './counterSlice';
-import pointsOfInterestReducer from './pointsOfInterest';
+import pointsOfInterest from './pointsOfInterest';
+import currentPosition from './currentPosition';
 
 const rootReducer = {
-    counter: counterSlice,
-    pointsOfInterest: pointsOfInterestReducer,
+    pointsOfInterest,
+    currentPosition,
 };
 
 export default rootReducer;

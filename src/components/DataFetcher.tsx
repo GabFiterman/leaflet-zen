@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addPointsOfInterest } from '../redux/slices/pointsOfInterest';
+import { setInitialPosition } from '../redux/slices/currentPosition';
 
 interface DataFetcherProps {
     endpoint: string;
@@ -24,6 +25,7 @@ const DataFetcher: React.FC<DataFetcherProps> = ({ endpoint }) => {
         try {
             const response = await axios.get<MyObject[]>(`http://localhost:3001${endpoint}`);
             dispatch(addPointsOfInterest(response.data));
+            dispatch(setInitialPosition(response.data[0]));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
