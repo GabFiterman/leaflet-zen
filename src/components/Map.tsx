@@ -8,6 +8,8 @@ import { updatePosition } from '../redux/slices/currentPosition';
 const Map: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
     const currentPosition = useSelector((state: any) => state.currentPosition);
+    const initialPosition = useSelector((state: any) => state.initialPosition);
+
     const dispatch = useDispatch();
 
     function handleMoveEnd() {
@@ -32,6 +34,24 @@ const Map: React.FC = () => {
             currentPosition.zoomLevel !== null
         ) {
             const { latitude, longitude, zoomLevel } = currentPosition;
+
+            if (!mapRef.current) {
+                const map = L.map('map').setView([latitude, longitude], zoomLevel);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                }).addTo(map);
+                mapRef.current = map;
+            } else {
+                mapRef.current.off('moveend');
+                mapRef.current.setView([latitude, longitude], zoomLevel);
+                mapRef.current.on('moveend', handleMoveEnd);
+            }
+
+            if (mapRef.current) {
+                mapRef.current.on('moveend', handleMoveEnd);
+            }
+        } else if (initialPosition.latitude !== null && initialPosition.longitude !== null) {
+            const { latitude, longitude, zoomLevel } = initialPosition;
 
             if (!mapRef.current) {
                 const map = L.map('map').setView([latitude, longitude], zoomLevel);

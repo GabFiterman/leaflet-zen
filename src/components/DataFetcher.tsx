@@ -3,13 +3,9 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addPointsOfInterest } from '../redux/slices/pointsOfInterest';
-import { setInitialPosition } from '../redux/slices/currentPosition';
+import { addInitialPosition } from '../redux/slices/initialPosition';
 
-interface DataFetcherProps {
-    endpoint: string;
-}
-
-interface MyObject {
+interface PointsOfInterest {
     id: number;
     description: string;
     latitude: number;
@@ -17,36 +13,51 @@ interface MyObject {
     zoomLevel: number;
 }
 
-const DataFetcher: React.FC<DataFetcherProps> = ({ endpoint }) => {
-    const dispatch = useDispatch();
-    const data = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
+interface InitialPosition {
+    latitude: number;
+    longitude: number;
+    zoomLevel: number;
+}
 
-    const fetchData = async () => {
+const DataFetcher: React.FC = () => {
+    const dispatch = useDispatch();
+    const pointsOfInterestData = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
+    const initialPositionData = useSelector((state: any) => state.initialPosition);
+
+    const getPointsOfInterest = async () => {
         try {
-            const response = await axios.get<MyObject[]>(`http://localhost:3001${endpoint}`);
+            const endpoint = '/pointsOfInterest';
+            const response = await axios.get<PointsOfInterest[]>(`http://localhost:3001${endpoint}`);
             dispatch(addPointsOfInterest(response.data));
-            dispatch(setInitialPosition(response.data[0]));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    const getInitialPosition = async () => {
+        try {
+            const endpoint = '/initialPosition';
+            const response = await axios.get<InitialPosition>(`http://localhost:3001${endpoint}`);
+            dispatch(addInitialPosition(response.data));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
     useEffect(() => {
-        if (data.length === 0) {
-            fetchData();
+        if (pointsOfInterestData.length === 0) {
+            getPointsOfInterest();
         }
-    }, [data]);
+        if (
+            initialPositionData.latitude === null ||
+            initialPositionData.longitude === null ||
+            initialPositionData.zoomLevel === null
+        ) {
+            getInitialPosition();
+        }
+    }, [pointsOfInterestData, initialPositionData]);
 
-    return (
-        <div>
-            <h2>Data from {endpoint}</h2>
-            <ul>
-                {data.map((item: any) => (
-                    <li key={item.id}>{JSON.stringify(item)}</li>
-                ))}
-            </ul>
-        </div>
-    );
+    return null;
 };
 
 export default DataFetcher;
