@@ -1,78 +1,78 @@
 {
-  "pointsOfInterest": [
-    {
-      "id": 1700442424553,
-      "description": "Parque Areião",
-      "latitude": -16.705988517246006,
-      "longitude": -4925644284629296,
-      "zoomLevel": 14
-    },
-    {
-      "id": 1700442467379,
-      "description": "Bosque dos Buritis",
-      "latitude": -16.67988610230819,
-      "longitude": -49258787102257050,
-      "zoomLevel": 14
-    },
-    {
-      "id": 1700442501594,
-      "description": "Parque Flamboyant",
-      "latitude": -16.700423742075337,
-      "longitude": -4923878754331669,
-      "zoomLevel": 14
-    },
-    {
-      "id": 1700498272238,
-      "description": "Praça Tamandaré",
-      "latitude": -16.68371439628099,
-      "longitude": -49.264401197121124,
-      "zoomLevel": 14
-    }
-  ],
-  "areasOfInterest": [
-    {
-      "id": 1,
-      "topLeft": {
-        "latitude": 37.7749,
-        "longitude": -122.4194
-      },
-      "bottomRight": {
-        "latitude": 38.7749,
-        "longitude": -121.4194
-      },
-      "description": "Area 1"
-    },
-    {
-      "id": 2,
-      "topLeft": {
-        "latitude": 40.7128,
-        "longitude": -74.006
-      },
-      "bottomRight": {
-        "latitude": 41.7128,
-        "longitude": -73.006
-      },
-      "description": "Area 2"
-    }
-  ],
-  "attentionPerimeters": [
-    {
-      "id": 1,
-      "center": {
-        "latitude": 37.7749,
-        "longitude": -122.4194
-      },
-      "radius": 5000,
-      "description": "Perimeter 1"
-    },
-    {
-      "id": 2,
-      "center": {
-        "latitude": 40.7128,
-        "longitude": -74.006
-      },
-      "radius": 7000,
-      "description": "Perimeter 2"
-    }
-  ]
+    "pointsOfInterest": [
+        {
+            "id": 1700442424553,
+            "description": "Parque Ecológico de Águas Claras",
+            "latitude": -15.835560879252482,
+            "longitude": -48.0252158841152,
+            "zoomLevel": 14
+        },
+        {
+            "id": 1700498272238,
+            "description": "Parque do Barigui Curitiba",
+            "latitude": -25.425464718145783,
+            "longitude": -49.30800478875754,
+            "zoomLevel": 14
+        },
+        {
+            "id": 1700442501594,
+            "description": "Parque Flamboyant Goiânia",
+            "latitude": -16.700423742075337,
+            "longitude": -49.23878754331669,
+            "zoomLevel": 14
+        },
+        {
+            "id": 1700442467379,
+            "description": "Jardim Botânico do Rio de Janeiro",
+            "latitude": -22.97015109742139,
+            "longitude": -43.224454298635614,
+            "zoomLevel": 14
+        }
+    ],
+    "areasOfInterest": [
+        {
+            "id": 1,
+            "topLeft": {
+                "latitude": 37.7749,
+                "longitude": -122.4194
+            },
+            "bottomRight": {
+                "latitude": 38.7749,
+                "longitude": -121.4194
+            },
+            "description": "Area 1"
+        },
+        {
+            "id": 2,
+            "topLeft": {
+                "latitude": 40.7128,
+                "longitude": -74.006
+            },
+            "bottomRight": {
+                "latitude": 41.7128,
+                "longitude": -73.006
+            },
+            "description": "Area 2"
+        }
+    ],
+    "attentionPerimeters": [
+        {
+            "id": 1,
+            "center": {
+                "latitude": 37.7749,
+                "longitude": -122.4194
+            },
+            "radius": 5000,
+            "description": "Perimeter 1"
+        },
+        {
+            "id": 2,
+            "center": {
+                "latitude": 40.7128,
+                "longitude": -74.006
+            },
+            "radius": 7000,
+            "description": "Perimeter 2"
+        }
+    ]
 }

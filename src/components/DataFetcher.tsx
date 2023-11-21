@@ -19,19 +19,21 @@ interface MyObject {
 const DataFetcher: React.FC<DataFetcherProps> = ({ endpoint }) => {
     const dispatch = useDispatch();
     const data = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get<MyObject[]>(`http://localhost:3001${endpoint}`);
+            dispatch(addPointsOfInterest(response.data));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     useEffect(() => {
         if (data.length === 0) {
-            const fetchData = async () => {
-                try {
-                    const response = await axios.get<MyObject[]>(`http://localhost:3001${endpoint}`);
-                    dispatch(addPointsOfInterest(response.data));
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            };
             fetchData();
         }
-    }, [dispatch, endpoint]);
+    }, [data]);
 
     return (
         <div>
