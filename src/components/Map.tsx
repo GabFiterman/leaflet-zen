@@ -28,48 +28,25 @@ const Map: React.FC = () => {
     }
 
     useEffect(() => {
-        if (
-            currentPosition.latitude !== null &&
-            currentPosition.longitude !== null &&
-            currentPosition.zoomLevel !== null
-        ) {
-            const { latitude, longitude, zoomLevel } = currentPosition;
+        const position =
+            currentPosition.latitude !== null && currentPosition.longitude !== null ? currentPosition : initialPosition;
 
-            if (!mapRef.current) {
-                const map = L.map('map').setView([latitude, longitude], zoomLevel);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors',
-                }).addTo(map);
-                mapRef.current = map;
-            } else {
-                mapRef.current.off('moveend');
-                mapRef.current.setView([latitude, longitude], zoomLevel);
-                mapRef.current.on('moveend', handleMoveEnd);
-            }
-
-            if (mapRef.current) {
-                mapRef.current.on('moveend', handleMoveEnd);
-            }
-        } else if (initialPosition.latitude !== null && initialPosition.longitude !== null) {
-            const { latitude, longitude, zoomLevel } = initialPosition;
-
-            if (!mapRef.current) {
-                const map = L.map('map').setView([latitude, longitude], zoomLevel);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors',
-                }).addTo(map);
-                mapRef.current = map;
-            } else {
-                mapRef.current.off('moveend');
-                mapRef.current.setView([latitude, longitude], zoomLevel);
-                mapRef.current.on('moveend', handleMoveEnd);
-            }
-
-            if (mapRef.current) {
-                mapRef.current.on('moveend', handleMoveEnd);
-            }
+        if (!mapRef.current) {
+            const map = L.map('map').setView([position.latitude, position.longitude], position.zoomLevel);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+            }).addTo(map);
+            mapRef.current = map;
+        } else {
+            mapRef.current.off('moveend');
+            mapRef.current.setView([position.latitude, position.longitude], position.zoomLevel);
+            mapRef.current.on('moveend', handleMoveEnd);
         }
-    }, [currentPosition, dispatch]);
+
+        if (mapRef.current) {
+            mapRef.current.on('moveend', handleMoveEnd);
+        }
+    }, [currentPosition, initialPosition, dispatch]);
 
     return <div id="map" className="h-5/6" />;
 };
