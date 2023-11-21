@@ -9,6 +9,7 @@ const AddNewItem: React.FC = () => {
     const [newDescription, setNewDescription] = useState<string>('');
     const [newLatitude, setNewLatitude] = useState<string>('');
     const [newLongitude, setNewLongitude] = useState<string>('');
+    const [newZoomLevel, setNewZoomLevel] = useState<string>('');
 
     const handleAddNewItem = async () => {
         if (newDescription.trim() !== '') {
@@ -17,6 +18,7 @@ const AddNewItem: React.FC = () => {
                 description: newDescription,
                 latitude: parseFloat(newLatitude),
                 longitude: parseFloat(newLongitude),
+                zoomLevel: parseFloat(newZoomLevel),
             };
 
             try {
@@ -26,6 +28,7 @@ const AddNewItem: React.FC = () => {
                 setNewDescription('');
                 setNewLatitude('');
                 setNewLongitude('');
+                setNewZoomLevel('');
             } catch (error) {
                 console.error('Error adding new item:', error);
             }
@@ -56,6 +59,13 @@ const AddNewItem: React.FC = () => {
                     placeholder="Nova Longitude"
                     value={newLongitude}
                     onChange={(e) => setNewLongitude(e.target.value)}
+                />
+                <input
+                    className="text-gray-800"
+                    type="number"
+                    placeholder="Nova Longitude"
+                    value={newZoomLevel}
+                    onChange={(e) => setNewZoomLevel(e.target.value)}
                 />
                 <button className="bg-slate-500 text-gray-100 px-4 py-1" onClick={handleAddNewItem}>
                     Adicionar Novo Item

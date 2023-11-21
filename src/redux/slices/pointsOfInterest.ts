@@ -5,6 +5,7 @@ interface PointOfInterest {
     description: string;
     latitude: number;
     longitude: number;
+    zoomLevel: number;
 }
 
 interface PointsOfInterestState {
