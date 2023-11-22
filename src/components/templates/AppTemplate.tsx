@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
-import Map from './components/organisms/Map';
-import { DataFetcher, InitialForm } from './components/molecules';
+import Map from '../organisms/Map';
+import { DataFetcher, InitialForm } from '../molecules';
 import { useSelector } from 'react-redux';
 
 function App() {
