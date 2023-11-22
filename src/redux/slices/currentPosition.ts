@@ -16,14 +16,14 @@ const currentPositionSlice = createSlice({
     name: 'currentPosition',
     initialState,
     reducers: {
-        setInitialPosition: (state, action: PayloadAction<CurrentPositionState>) => {
+        setCurrentPosition: (state, action: PayloadAction<CurrentPositionState>) => {
             return { ...state, ...action.payload };
         },
-        updatePosition: (state, action: PayloadAction<Partial<CurrentPositionState>>) => {
+        updateCurrentPosition: (state, action: PayloadAction<Partial<CurrentPositionState>>) => {
             return { ...state, ...action.payload };
         },
     },
 });
 
-export const { setInitialPosition, updatePosition } = currentPositionSlice.actions;
+export const { setCurrentPosition, updateCurrentPosition } = currentPositionSlice.actions;
 export default currentPositionSlice.reducer;
