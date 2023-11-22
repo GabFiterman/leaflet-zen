@@ -4,6 +4,7 @@ import Map from './components/Map';
 import DataFetcher from './components/DataFetcher';
 import DataInput from './components/InputForm';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { Button, Input } from './components/atoms';
 
 function App() {
     const currentPosition = useSelector((state: any) => state.currentPosition);
@@ -29,10 +30,13 @@ function App() {
         );
     } else {
         return (
-            <div className="text-center bg-rose-950 h-[100vh] pt-16 text-white">
-                <DataInput />
+            <main className="bg-lightBg h-[100vh] text-darkText pt-4 px-4">
+                <nav className="">
+                    <h3 className="text-2xl font-bold">Initial Position</h3>
+                    <DataInput />
+                </nav>
                 <Map />
-            </div>
+            </main>
         );
     }
 }

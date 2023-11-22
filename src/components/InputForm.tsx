@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePosition } from '../redux/slices/currentPosition';
 import { updateInitialPosition } from '../redux/slices/initialPosition';
+import { Button, Input } from './atoms';
 import axios from 'axios';
 
 const InputForm: React.FC = () => {
@@ -105,44 +106,25 @@ const InputForm: React.FC = () => {
     };
 
     return (
-        <div className="text-black">
+        <div>
             <div className="flex justify-center gap-5">
-                <input
-                    type="text"
-                    className="rounded-md px-3"
-                    placeholder="Latitude"
+                <Input
                     value={latitude}
                     onChange={(e) => handleInputChange('latitude', e.target.value)}
                     onBlur={(e) => handleInputBlur('latitude', e.target.value)}
                 />
-                <input
-                    type="text"
-                    className="rounded-md px-3"
-                    placeholder="Longitude"
+                <Input
                     value={longitude}
                     onChange={(e) => handleInputChange('longitude', e.target.value)}
                     onBlur={(e) => handleInputBlur('longitude', e.target.value)}
                 />
-                <input
-                    type="text"
-                    className="rounded-md px-3"
-                    placeholder="Zoom Level"
+                <Input
                     value={zoomLevel}
                     onChange={(e) => handleInputChange('zoomLevel', e.target.value)}
                     onBlur={(e) => handleInputBlur('zoomLevel', e.target.value)}
                 />
-                <button
-                    onClick={handleReturnToInitial}
-                    className="bg-slate-800 px-4 py-2 text-gray-50 font-bold rounded-md"
-                >
-                    Return to Initial Pos
-                </button>
-                <button
-                    onClick={handleUpdateInitialPosition}
-                    className="bg-slate-800 px-4 py-2 text-gray-50 font-bold rounded-md"
-                >
-                    Update Initial Pos
-                </button>
+                <Button text="Incial" onClick={handleReturnToInitial} />
+                <Button text="Salvar" onClick={handleUpdateInitialPosition} />
             </div>
         </div>
     );
