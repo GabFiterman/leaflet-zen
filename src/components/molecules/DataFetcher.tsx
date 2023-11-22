@@ -3,8 +3,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { addPointsOfInterest } from '../redux/slices/pointsOfInterest';
-import { addInitialPosition } from '../redux/slices/initialPosition';
+import { addPointsOfInterest } from '../../redux/slices/pointsOfInterest';
+import { addInitialPosition } from '../../redux/slices/initialPosition';
 
 const DataFetcher: React.FC = () => {
     const dispatch = useDispatch();

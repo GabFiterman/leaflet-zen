@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCurrentPosition } from '../redux/slices/currentPosition';
+import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 
 const Map: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
