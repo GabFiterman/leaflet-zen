@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { updatePosition } from '../redux/slices/currentPosition';
+import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 
 const Map: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
@@ -17,15 +17,29 @@ const Map: React.FC = () => {
             const newCenter = mapRef.current.getCenter();
             const newZoomLevel = mapRef.current.getZoom();
 
-            dispatch(
-                updatePosition({
-                    latitude: newCenter.lat,
-                    longitude: newCenter.lng,
-                    zoomLevel: newZoomLevel,
-                }),
-            );
+            const newPosition = {
+                latitude: newCenter.lat,
+                longitude: newCenter.lng,
+                zoomLevel: newZoomLevel,
+            };
+
+            if (
+                currentPosition.latitude !== newPosition.latitude ||
+                currentPosition.longitude !== newPosition.longitude ||
+                currentPosition.zoomLevel !== newPosition.zoomLevel
+            ) {
+                dispatch(updateCurrentPosition(newPosition));
+            }
         }
     }
+
+    useEffect(() => {
+        if (mapRef.current) {
+            mapRef.current.off('moveend');
+            mapRef.current.setView([currentPosition.latitude, currentPosition.longitude], currentPosition.zoomLevel);
+            mapRef.current.on('moveend', handleMoveEnd);
+        }
+    }, [currentPosition]);
 
     useEffect(() => {
         const position =
@@ -37,14 +51,8 @@ const Map: React.FC = () => {
                 attribution: '© OpenStreetMap contributors',
             }).addTo(map);
             mapRef.current = map;
-        } else {
-            mapRef.current.off('moveend');
-            mapRef.current.setView([position.latitude, position.longitude], position.zoomLevel);
-            mapRef.current.on('moveend', handleMoveEnd);
-        }
 
-        if (mapRef.current) {
-            mapRef.current.on('moveend', handleMoveEnd);
+            map.on('moveend', handleMoveEnd);
         }
     }, [currentPosition, initialPosition, dispatch]);
 

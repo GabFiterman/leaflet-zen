@@ -1,7 +1,6 @@
-// src/components/AddNewItem.tsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addPointOfInterest } from '../redux/slices/pointsOfInterest';
+import { addPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import axios from 'axios';
 
 const AddNewItem: React.FC = () => {
