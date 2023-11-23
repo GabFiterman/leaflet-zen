@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import Map from '../organisms/Map';
-import { DataFetcher, InitialForm } from '../molecules';
+import { DataFetcher, InitialForm, AddPointForm } from '../molecules';
 import { useSelector } from 'react-redux';
+import SideBar from '../organisms/SideBar';
 
 function App() {
     const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
+    const currentForm = useSelector((state: any) => state.formType.currentForm);
+
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -28,13 +31,18 @@ function App() {
         );
     } else {
         return (
-            <main className="bg-lightBg h-[100vh] text-darkText pt-4 px-4">
-                <nav className="">
-                    <h3 className="text-2xl font-bold">Initial Position</h3>
-                    <InitialForm />
+            <div className="bg-lightBg h-[100vh] text-darkText flex">
+                <nav className="bg-darkBg w-1/4">
+                    <SideBar />
                 </nav>
-                <Map />
-            </main>
+                <main className="w-9/12 mt-3">
+                    <div className="ml-3">
+                        {currentForm === 'InitialForm' && <InitialForm />}
+                        {currentForm === 'AddPointForm' && <AddPointForm />}
+                    </div>
+                    <Map />
+                </main>
+            </div>
         );
     }
 }

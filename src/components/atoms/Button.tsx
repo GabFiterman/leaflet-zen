@@ -1,15 +1,27 @@
 interface ButtonProps {
     text: string;
     type?: 'button' | 'submit' | 'reset';
-    color?: 'primary' | 'highlight' | 'lightBg' | 'darkBg';
+    color?: 'primary' | 'highlight' | 'lightBg' | 'darkBg' | 'invisible';
     bold?: boolean;
+    paddingX?: string;
+    paddingY?: string;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, type = 'button', color = 'primary', bold, onClick }) => {
-    let buttonClasses = 'px-3 py-2 rounded-md';
+const Button: React.FC<ButtonProps> = ({
+    text,
+    type = 'button',
+    color = 'primary',
+    paddingX = 3,
+    paddingY,
+    bold,
+    onClick,
+}) => {
+    let buttonClasses = 'px-3 rounded-md';
 
     bold ? (buttonClasses += ' font-bold') : (buttonClasses += ' font-normal');
+    paddingX ? (buttonClasses += ` px-${paddingX}`) : (buttonClasses += ' px-3');
+    paddingY ? (buttonClasses += ` py-${paddingY}`) : (buttonClasses += ' py-0');
 
     switch (color) {
         case 'primary':
@@ -23,6 +35,9 @@ const Button: React.FC<ButtonProps> = ({ text, type = 'button', color = 'primary
             break;
         case 'darkBg':
             buttonClasses += ' bg-darkBg text-white';
+            break;
+        case 'invisible':
+            buttonClasses += ' bg-transparent text-white';
             break;
         default:
             buttonClasses += ' bg-primary text-white';
