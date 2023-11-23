@@ -17,9 +17,9 @@ const Input: React.FC<InputProps> = ({
     onChange,
     onBlur,
 }) => {
-    let inputClasses = 'rounded px-3 border-2 border-solid';
+    let inputClasses = 'rounded px-1 border-2 border-solid max-w-[100px]';
 
-    color ? (inputClasses += ` border-${color}`) : (inputClasses += ' border-lightText');
+    color ? (inputClasses += ` border-${color}`) : (inputClasses += ' border-slate-500');
     textColor ? (inputClasses += ` text-${color}`) : (inputClasses += ' text-darkText');
 
     return (
