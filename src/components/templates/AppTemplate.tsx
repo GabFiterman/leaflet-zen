@@ -4,6 +4,7 @@ import Map from '../organisms/Map';
 import { DataFetcher, InitialForm, AddPointForm } from '../molecules';
 import { useSelector } from 'react-redux';
 import SideBar from '../organisms/SideBar';
+import AddAreaForm from '../molecules/AddAreaForm';
 
 function App() {
     const currentPosition = useSelector((state: any) => state.currentPosition);
@@ -39,6 +40,7 @@ function App() {
                     <div className="ml-3">
                         {currentForm === 'InitialForm' && <InitialForm />}
                         {currentForm === 'AddPointForm' && <AddPointForm />}
+                        {currentForm === 'AddAreaForm' && <AddAreaForm />}
                     </div>
                     <Map />
                 </main>
