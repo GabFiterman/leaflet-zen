@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
+import { setFormType } from '../../redux/slices/formType';
 import { Button } from '../atoms';
 
 interface ButtonProps {
@@ -19,6 +20,7 @@ const ReturnToInitialButton: React.FC<ButtonProps> = ({
 
     const handleReturnToInitial = () => {
         dispatch(updateCurrentPosition(initialPosition));
+        dispatch(setFormType('InitialForm'));
     };
 
     return <Button text={text} color={color} bold={bold} onClick={handleReturnToInitial} paddingY="2" />;

@@ -2,29 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
-import { updateInitialPosition } from '../../redux/slices/initialPosition';
-import { Button, Input } from './../atoms';
+import { addPointOfInterest } from '../../redux/slices/pointsOfInterest';
+import { Button, Input } from '../atoms';
 import axios from 'axios';
 
-const InitialForm: React.FC = () => {
+const AddPointForm: React.FC = () => {
     const dispatch = useDispatch();
     const currentPosition = useSelector((state: any) => state.currentPosition);
-    const initialPosition = useSelector((state: any) => state.initialPosition);
 
-    const [localLatitude, setLocalLatitude] = useState(initialPosition?.latitude?.toString() || '');
-    const [localLongitude, setLocalLongitude] = useState(initialPosition?.longitude?.toString() || '');
-    const [localZoomLevel, setLocalZoomLevel] = useState(initialPosition?.zoomLevel?.toString() || '');
+    const [localDescription, setLocalDescription] = useState('');
+    const [localLatitude, setLocalLatitude] = useState(currentPosition?.latitude?.toString() || '');
+    const [localLongitude, setLocalLongitude] = useState(currentPosition?.longitude?.toString() || '');
+    const [localZoomLevel, setLocalZoomLevel] = useState(currentPosition?.zoomLevel?.toString() || '');
 
     useEffect(() => {
-        if (
-            initialPosition.latitude !== null &&
-            initialPosition.longitude !== null &&
-            initialPosition.zoomLevel !== null
-        ) {
-            setLocalLatitude(initialPosition.latitude.toString());
-            setLocalLongitude(initialPosition.longitude.toString());
-            setLocalZoomLevel(initialPosition.zoomLevel.toString());
-        }
         if (
             currentPosition.latitude !== null &&
             currentPosition.longitude !== null &&
@@ -34,21 +25,23 @@ const InitialForm: React.FC = () => {
             setLocalLongitude(currentPosition.longitude.toString());
             setLocalZoomLevel(currentPosition.zoomLevel.toString());
         }
-    }, [currentPosition, initialPosition]);
+    }, [currentPosition]);
 
-    const handleUpdateInitialPosition = async () => {
+    const handleAddPointOfInterest = async () => {
         if (localLatitude.trim() !== '' && localLongitude.trim() !== '' && localZoomLevel.trim() !== '') {
             const newItem = {
+                id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
+                description: localDescription,
                 latitude: parseFloat(localLatitude),
                 longitude: parseFloat(localLongitude),
                 zoomLevel: parseInt(localZoomLevel),
             };
 
             try {
-                const endpoint = '/initialPosition';
+                const endpoint = '/pointsOfInterest';
                 await axios.post(`http://localhost:3001${endpoint}`, newItem);
-                dispatch(updateInitialPosition(newItem));
-                alert('Posição inicial atualizada com sucesso!');
+                dispatch(addPointOfInterest(newItem));
+                alert('Novo ponto adicionado com sucesso!');
             } catch (error) {
                 console.error('Error adding item:', error);
             }
@@ -57,8 +50,12 @@ const InitialForm: React.FC = () => {
 
     return (
         <div>
-            <h3 className="text-2xl">Ponto e Zoom Iniciais</h3>
+            <h3 className="text-2xl">Adicionar Ponto de Interesse</h3>
             <div className="flex justify-start gap-2">
+                <div>
+                    <span>Descrição: </span>
+                    <Input value={localDescription} onChange={(e) => setLocalDescription(e.target.value)} />
+                </div>
                 <div>
                     <span>Latitude: </span>
                     <Input
@@ -90,10 +87,10 @@ const InitialForm: React.FC = () => {
                     />
                 </div>
 
-                <Button text="Salvar" onClick={handleUpdateInitialPosition} />
+                <Button text="Salvar" onClick={handleAddPointOfInterest} />
             </div>
         </div>
     );
 };
 
-export default InitialForm;
+export default AddPointForm;

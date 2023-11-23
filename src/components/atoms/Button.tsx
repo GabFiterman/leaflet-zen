@@ -1,7 +1,7 @@
 interface ButtonProps {
     text: string;
     type?: 'button' | 'submit' | 'reset';
-    color?: 'primary' | 'highlight' | 'lightBg' | 'darkBg';
+    color?: 'primary' | 'highlight' | 'lightBg' | 'darkBg' | 'invisible';
     bold?: boolean;
     paddingX?: string;
     paddingY?: string;
@@ -35,6 +35,9 @@ const Button: React.FC<ButtonProps> = ({
             break;
         case 'darkBg':
             buttonClasses += ' bg-darkBg text-white';
+            break;
+        case 'invisible':
+            buttonClasses += ' bg-transparent text-white';
             break;
         default:
             buttonClasses += ' bg-primary text-white';
