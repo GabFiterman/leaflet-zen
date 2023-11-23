@@ -1,8 +1,8 @@
 {
   "initialPosition": {
-    "latitude": -15.163708137128665,
-    "longitude": -48.27556426458464,
-    "zoomLevel": 14
+    "latitude": -15.779038580798684,
+    "longitude": -47.75618013453427,
+    "zoomLevel": 10
   },
   "pointsOfInterest": [
     {
@@ -53,6 +53,34 @@
       "latitude": -15.785926187377566,
       "longitude": -47.876326857866644,
       "zoomLevel": 12
+    },
+    {
+      "id": 170077095367324,
+      "description": "Testing",
+      "latitude": -13.14581726891326,
+      "longitude": -65.04393747277925,
+      "zoomLevel": 5
+    },
+    {
+      "id": 170077099435285,
+      "description": "Centro de Brasilia",
+      "latitude": -15.793323120787448,
+      "longitude": -47.88262607646629,
+      "zoomLevel": 16
+    },
+    {
+      "id": 170077113968762,
+      "description": "bangui",
+      "latitude": 4.375577685958153,
+      "longitude": 18.557764566081634,
+      "zoomLevel": 12
+    },
+    {
+      "id": 170077285073342,
+      "description": "SP Capital",
+      "latitude": -23.550013946550195,
+      "longitude": -46.6356345647906,
+      "zoomLevel": 11
     }
   ],
   "areasOfInterest": [

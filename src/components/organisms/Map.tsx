@@ -3,12 +3,16 @@ import React, { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useDispatch, useSelector } from 'react-redux';
+import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
+import mapPointMarker from '../atoms/MapMarker.svg';
 
 const Map: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
+
     const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
+    const formType = useSelector((state: any) => state.formType.currentForm);
 
     const dispatch = useDispatch();
 
@@ -34,12 +38,38 @@ const Map: React.FC = () => {
     }
 
     useEffect(() => {
+        console.log(formType);
         if (mapRef.current) {
             mapRef.current.off('moveend');
             mapRef.current.setView([currentPosition.latitude, currentPosition.longitude], currentPosition.zoomLevel);
             mapRef.current.on('moveend', handleMoveEnd);
+
+            if (formType == 'AddPointForm') {
+                let marker: L.Marker | null = null;
+                mapRef.current.on('click', function (e) {
+                    const { lat, lng } = e.latlng;
+                    dispatch(
+                        setSelectPointOfInterest({
+                            latitude: lat,
+                            longitude: lng,
+                            zoomLevel: currentPosition.zoomLevel,
+                        }),
+                    );
+                    if (mapRef.current) {
+                        if (marker) {
+                            mapRef.current.removeLayer(marker);
+                        }
+                        const mapMarkerIcon = L.icon({
+                            iconUrl: mapPointMarker,
+                            iconSize: [38, 95],
+                            popupAnchor: [-3, -76],
+                        });
+                        marker = L.marker([lat, lng], { icon: mapMarkerIcon }).addTo(mapRef.current);
+                    }
+                });
+            }
         }
-    }, [currentPosition]);
+    }, [currentPosition, formType]);
 
     useEffect(() => {
         const position =

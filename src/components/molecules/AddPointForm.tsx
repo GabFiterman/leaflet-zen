@@ -1,31 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 import { addPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { Button, Input } from '../atoms';
 import axios from 'axios';
 
 const AddPointForm: React.FC = () => {
     const dispatch = useDispatch();
-    const currentPosition = useSelector((state: any) => state.currentPosition);
+    const selectedPointOfInterest = useSelector((state: any) => state.pointsOfInterest.selectedPointOfInterest);
 
     const [localDescription, setLocalDescription] = useState('');
-    const [localLatitude, setLocalLatitude] = useState(currentPosition?.latitude?.toString() || '');
-    const [localLongitude, setLocalLongitude] = useState(currentPosition?.longitude?.toString() || '');
-    const [localZoomLevel, setLocalZoomLevel] = useState(currentPosition?.zoomLevel?.toString() || '');
+
+    const [localLatitude, setLocalLatitude] = useState(selectedPointOfInterest?.latitude?.toString() || '');
+    const [localLongitude, setLocalLongitude] = useState(selectedPointOfInterest?.longitude?.toString() || '');
+    const [localZoomLevel, setLocalZoomLevel] = useState(selectedPointOfInterest?.zoomLevel?.toString() || '');
 
     useEffect(() => {
-        if (
-            currentPosition.latitude !== null &&
-            currentPosition.longitude !== null &&
-            currentPosition.zoomLevel !== null
-        ) {
-            setLocalLatitude(currentPosition.latitude.toString());
-            setLocalLongitude(currentPosition.longitude.toString());
-            setLocalZoomLevel(currentPosition.zoomLevel.toString());
+        if (selectedPointOfInterest) {
+            setLocalLatitude(selectedPointOfInterest.latitude.toString());
+            setLocalLongitude(selectedPointOfInterest.longitude.toString());
+            setLocalZoomLevel(selectedPointOfInterest.zoomLevel.toString());
         }
-    }, [currentPosition]);
+    }, [selectedPointOfInterest]);
 
     const handleAddPointOfInterest = async () => {
         if (localLatitude.trim() !== '' && localLongitude.trim() !== '' && localZoomLevel.trim() !== '') {
@@ -58,33 +54,15 @@ const AddPointForm: React.FC = () => {
                 </div>
                 <div>
                     <span>Latitude: </span>
-                    <Input
-                        value={localLatitude}
-                        onChange={(e) => setLocalLatitude(e.target.value)}
-                        onBlur={() => {
-                            dispatch(updateCurrentPosition({ latitude: parseFloat(localLatitude) }));
-                        }}
-                    />
+                    <Input value={localLatitude} onChange={(e) => setLocalLatitude(e.target.value)} />
                 </div>
                 <div>
                     <span>Longitude: </span>
-                    <Input
-                        value={localLongitude}
-                        onChange={(e) => setLocalLongitude(e.target.value)}
-                        onBlur={() => {
-                            dispatch(updateCurrentPosition({ longitude: parseFloat(localLongitude) }));
-                        }}
-                    />
+                    <Input value={localLongitude} onChange={(e) => setLocalLongitude(e.target.value)} />
                 </div>
                 <div>
                     <span>Zoom: </span>
-                    <Input
-                        value={localZoomLevel}
-                        onChange={(e) => setLocalZoomLevel(e.target.value)}
-                        onBlur={() => {
-                            dispatch(updateCurrentPosition({ zoomLevel: parseInt(localZoomLevel) }));
-                        }}
-                    />
+                    <Input value={localZoomLevel} />
                 </div>
 
                 <Button text="Salvar" onClick={handleAddPointOfInterest} />
