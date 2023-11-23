@@ -55,39 +55,40 @@ const InitialForm: React.FC = () => {
         }
     };
 
-    const handleReturnToInitial = () => {
-        dispatch(updateCurrentPosition(initialPosition));
-        setLocalLatitude(initialPosition.latitude.toString());
-        setLocalLongitude(initialPosition.longitude.toString());
-        setLocalZoomLevel(initialPosition.zoomLevel.toString());
-    };
-
     return (
         <div>
-            <div className="flex justify-center gap-5">
-                <Input
-                    value={localLatitude}
-                    onChange={(e) => setLocalLatitude(e.target.value)}
-                    onBlur={() => {
-                        dispatch(updateCurrentPosition({ latitude: parseFloat(localLatitude) }));
-                    }}
-                />
-                <Input
-                    value={localLongitude}
-                    onChange={(e) => setLocalLongitude(e.target.value)}
-                    onBlur={() => {
-                        dispatch(updateCurrentPosition({ longitude: parseFloat(localLongitude) }));
-                    }}
-                />
-                <Input
-                    value={localZoomLevel}
-                    onChange={(e) => setLocalZoomLevel(e.target.value)}
-                    onBlur={() => {
-                        dispatch(updateCurrentPosition({ zoomLevel: parseInt(localZoomLevel) }));
-                    }}
-                />
+            <div className="flex justify-start gap-2">
+                <div>
+                    <span>Latitude: </span>
+                    <Input
+                        value={localLatitude}
+                        onChange={(e) => setLocalLatitude(e.target.value)}
+                        onBlur={() => {
+                            dispatch(updateCurrentPosition({ latitude: parseFloat(localLatitude) }));
+                        }}
+                    />
+                </div>
+                <div>
+                    <span>Longitude: </span>
+                    <Input
+                        value={localLongitude}
+                        onChange={(e) => setLocalLongitude(e.target.value)}
+                        onBlur={() => {
+                            dispatch(updateCurrentPosition({ longitude: parseFloat(localLongitude) }));
+                        }}
+                    />
+                </div>
+                <div>
+                    <span>Zoom: </span>
+                    <Input
+                        value={localZoomLevel}
+                        onChange={(e) => setLocalZoomLevel(e.target.value)}
+                        onBlur={() => {
+                            dispatch(updateCurrentPosition({ zoomLevel: parseInt(localZoomLevel) }));
+                        }}
+                    />
+                </div>
 
-                <Button text="Incial" onClick={handleReturnToInitial} />
                 <Button text="Salvar" onClick={handleUpdateInitialPosition} />
             </div>
         </div>

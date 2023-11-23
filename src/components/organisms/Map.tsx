@@ -18,8 +18,8 @@ const Map: React.FC = () => {
             const newZoomLevel = mapRef.current.getZoom();
 
             const newPosition = {
-                latitude: newCenter.lat,
-                longitude: newCenter.lng,
+                latitude: newCenter?.lat,
+                longitude: newCenter?.lng,
                 zoomLevel: newZoomLevel,
             };
 
