@@ -54,6 +54,10 @@ const AddPerimeterForm: React.FC = () => {
                 await axios.post(`http://localhost:3001${endpoint}`, newPerimeterAttention);
                 dispatch(addPerimeterAttention(newPerimeterAttention));
                 alert('Novo perímetro adicionado com sucesso!');
+                setLocalDescription('');
+                setLocalLatitude('');
+                setLocalLongitude('');
+                setLocalRadius('');
             } catch (error) {
                 console.error('Error adding item:', error);
             }

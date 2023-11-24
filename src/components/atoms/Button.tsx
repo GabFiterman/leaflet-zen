@@ -5,27 +5,29 @@ interface ButtonProps {
     bold?: boolean;
     paddingX?: string;
     paddingY?: string;
+    fullWidth?: boolean;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     trash?: boolean;
     onTrashClick?: () => void;
+    sidebar?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
     text,
     type = 'button',
     color = 'primary',
-    paddingX = '3',
-    paddingY = '0',
+    fullWidth,
     bold,
     onClick,
     trash,
     onTrashClick,
+    sidebar,
 }) => {
-    let buttonClasses = 'px-3 rounded-md';
+    let buttonClasses = 'rounded py-1 px-4';
+    sidebar && (buttonClasses += ' py-4 flex justify-between items-center');
 
     bold ? (buttonClasses += ' font-bold') : (buttonClasses += ' font-normal');
-    buttonClasses += ` px-${paddingX}`;
-    buttonClasses += ` py-${paddingY}`;
+    fullWidth && (buttonClasses += ' w-full');
 
     switch (color) {
         case 'primary':
@@ -52,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
         <button type={type} className={buttonClasses} onClick={onClick}>
             {text}
             {trash && (
-                <span className="ml-2 cursor-pointer" onClick={onTrashClick}>
+                <span className="cursor-pointer" onClick={onTrashClick}>
                     🗑️
                 </span>
             )}

@@ -24,7 +24,7 @@ const ReturnToInitialButton: React.FC<ButtonProps> = ({
         dispatch(setFormType('InitialForm'));
     };
 
-    return <Button text={text} color={color} bold={bold} onClick={handleReturnToInitial} paddingY="2" />;
+    return <Button fullWidth text={text} color={color} bold={bold} onClick={handleReturnToInitial} paddingY="2" />;
 };
 
 export default ReturnToInitialButton;

@@ -38,6 +38,10 @@ const AddPointForm: React.FC = () => {
                 await axios.post(`http://localhost:3001${endpoint}`, newItem);
                 dispatch(addPointOfInterest(newItem));
                 alert('Novo ponto adicionado com sucesso!');
+                setLocalDescription('');
+                setLocalLatitude('');
+                setLocalLongitude('');
+                setLocalZoomLevel('');
             } catch (error) {
                 console.error('Error adding item:', error);
             }
@@ -65,7 +69,9 @@ const AddPointForm: React.FC = () => {
                     <Input value={localZoomLevel} />
                 </div>
 
-                <Button text="Salvar" onClick={handleAddPointOfInterest} />
+                <div className="w-sm">
+                    <Button text="Salvar" onClick={handleAddPointOfInterest} />
+                </div>
             </div>
         </div>
     );

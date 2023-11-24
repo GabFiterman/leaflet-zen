@@ -6,6 +6,7 @@ interface InputProps {
     value: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    required?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -16,6 +17,7 @@ const Input: React.FC<InputProps> = ({
     value,
     onChange,
     onBlur,
+    required,
 }) => {
     let inputClasses = 'rounded px-1 border-2 border-solid max-w-[100px]';
 
@@ -30,6 +32,7 @@ const Input: React.FC<InputProps> = ({
             value={value}
             onChange={onChange}
             onBlur={onBlur}
+            required={required}
         />
     );
 };

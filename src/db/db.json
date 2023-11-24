@@ -57,15 +57,6 @@
       "radius": 3160.295101323465
     },
     {
-      "id": 170083898249041,
-      "description": "Nordeste",
-      "center": {
-        "latitude": -7.057541412995257,
-        "longitude": -38.01908757519374
-      },
-      "radius": 489692.4769832986
-    },
-    {
       "id": 170084008303340,
       "description": "BH",
       "center": {
