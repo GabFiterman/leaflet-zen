@@ -27,7 +27,8 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.leaflet-draw-draw-rectangle {
+.leaflet-draw-draw-rectangle,
+.leaflet-draw-draw-circle {
     width: 5rem !important;
     height: min-content !important;
     line-height: 1rem !important;
