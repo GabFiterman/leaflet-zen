@@ -1,8 +1,8 @@
 {
     "initialPosition": {
-        "latitude": -15.779038580798684,
-        "longitude": -47.75618013453427,
-        "zoomLevel": 10
+        "latitude": -15.78217479876596,
+        "longitude": -47.86369615835108,
+        "zoomLevel": 12
     },
     "pointsOfInterest": [
         {
@@ -125,6 +125,42 @@
             "bottomRight": {
                 "latitude": -15.796712126192793,
                 "longitude": -47.87631337210433
+            }
+        },
+        {
+            "id": 170079244483635,
+            "description": "Brasilia Inteira",
+            "topLeft": {
+                "latitude": -15.708904645849522,
+                "longitude": -47.98220257979214
+            },
+            "bottomRight": {
+                "latitude": -15.8517464011361,
+                "longitude": -47.81182075728044
+            }
+        },
+        {
+            "id": 170079269984398,
+            "description": "Pernambuco",
+            "topLeft": {
+                "latitude": -7.612936028725667,
+                "longitude": -39.1524043081222
+            },
+            "bottomRight": {
+                "latitude": -9.30946403606614,
+                "longitude": -34.96430918702842
+            }
+        },
+        {
+            "id": 170079491056065,
+            "description": "Sobral",
+            "topLeft": {
+                "latitude": -3.587128607531157,
+                "longitude": -40.45445566536668
+            },
+            "bottomRight": {
+                "latitude": -3.7668054463809337,
+                "longitude": -40.24697457505002
             }
         }
     ],

@@ -2,9 +2,11 @@
 import React, { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet-draw';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
+import { setSelectAreaOfInterest } from '../../redux/slices/areasOfInterest';
 import mapPointMarker from '../atoms/MapMarker.svg';
 
 const Map: React.FC = () => {
@@ -36,15 +38,14 @@ const Map: React.FC = () => {
             }
         }
     }
-
+    const drawControl = useRef<L.Control.Draw | null>(null);
     useEffect(() => {
-        console.log(formType);
         if (mapRef.current) {
             mapRef.current.off('moveend');
             mapRef.current.setView([currentPosition.latitude, currentPosition.longitude], currentPosition.zoomLevel);
             mapRef.current.on('moveend', handleMoveEnd);
 
-            if (formType == 'AddPointForm') {
+            if (formType === 'AddPointForm') {
                 let marker: L.Marker | null = null;
                 mapRef.current.on('click', function (e) {
                     const { lat, lng } = e.latlng;
@@ -67,6 +68,51 @@ const Map: React.FC = () => {
                         marker = L.marker([lat, lng], { icon: mapMarkerIcon }).addTo(mapRef.current);
                     }
                 });
+            } else if (formType === 'AddAreaForm') {
+                const drawnItems = new L.FeatureGroup();
+                mapRef.current.addLayer(drawnItems);
+
+                if (drawControl.current) {
+                    mapRef.current.removeControl(drawControl.current);
+                }
+
+                drawControl.current = new L.Control.Draw({
+                    draw: {
+                        rectangle: {},
+                        polygon: false,
+                        polyline: false,
+                        circle: false,
+                        marker: false,
+                        circlemarker: false,
+                    },
+                    position: 'topleft',
+                });
+                L.drawLocal.draw.toolbar.buttons.rectangle = 'Criar Área';
+
+                mapRef.current.addControl(drawControl.current);
+
+                mapRef.current.off('click');
+
+                mapRef.current.on(L.Draw.Event.CREATED, function (e: any) {
+                    const type = e.layerType;
+                    const layer = e.layer;
+
+                    drawnItems.clearLayers();
+
+                    if (type === 'rectangle') {
+                        const bounds = layer.getBounds();
+                        const topLeft = { latitude: bounds.getNorthWest().lat, longitude: bounds.getNorthWest().lng };
+                        const bottomRight = {
+                            latitude: bounds.getSouthEast().lat,
+                            longitude: bounds.getSouthEast().lng,
+                        };
+                        dispatch(setSelectAreaOfInterest({ topLeft, bottomRight }));
+                    }
+
+                    drawnItems.addLayer(layer);
+                });
+            } else if (formType !== 'AddAreaForm') {
+                mapRef.current.off('draw:created');
             }
         }
     }, [currentPosition, formType]);
