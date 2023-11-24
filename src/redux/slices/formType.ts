@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface FormType {
-    currentForm: 'InitialForm' | 'AddPointForm';
+    currentForm: 'InitialForm' | 'AddPointForm' | 'AddAreaForm';
 }
 
 const initialState: FormType = {
@@ -12,7 +12,7 @@ const formTypeSlice = createSlice({
     name: 'formType',
     initialState,
     reducers: {
-        setFormType: (state, action: PayloadAction<'InitialForm' | 'AddPointForm'>) => {
+        setFormType: (state, action: PayloadAction<'InitialForm' | 'AddPointForm' | 'AddAreaForm'>) => {
             state.currentForm = action.payload;
         },
     },

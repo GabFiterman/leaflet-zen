@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import Map from '../organisms/Map';
-import { DataFetcher, InitialForm, AddPointForm } from '../molecules';
+import { DataFetcher, InitialForm, AddPointForm, AddAreaForm } from '../molecules';
 import { useSelector } from 'react-redux';
 import SideBar from '../organisms/SideBar';
 
@@ -39,6 +39,7 @@ function App() {
                     <div className="ml-3">
                         {currentForm === 'InitialForm' && <InitialForm />}
                         {currentForm === 'AddPointForm' && <AddPointForm />}
+                        {currentForm === 'AddAreaForm' && <AddAreaForm />}
                     </div>
                     <Map />
                 </main>

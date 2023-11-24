@@ -26,3 +26,19 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.leaflet-draw-draw-rectangle {
+    width: 5rem !important;
+    height: min-content !important;
+    line-height: 1rem !important;
+    background-color: #104e8b !important;
+    color: #ffffff !important;
+    padding: 0.25rem 0.65rem;
+}
+
+.leaflet-draw-actions a {
+    margin-top: 1rem !important;
+    background-color: #8b1010;
+    color: #ffffff !important;
+    padding: 0.25rem 0.65rem;
+}
