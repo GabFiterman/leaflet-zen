@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import Map from '../organisms/Map';
-import { DataFetcher, InitialForm, AddPointForm, AddAreaForm } from '../molecules';
+import { DataFetcher, InitialForm, AddPointForm, AddAreaForm, AddPerimeterForm } from '../molecules';
 import { useSelector } from 'react-redux';
 import SideBar from '../organisms/SideBar';
 
@@ -40,6 +40,7 @@ function App() {
                         {currentForm === 'InitialForm' && <InitialForm />}
                         {currentForm === 'AddPointForm' && <AddPointForm />}
                         {currentForm === 'AddAreaForm' && <AddAreaForm />}
+                        {currentForm === 'AddPerimeterForm' && <AddPerimeterForm />}
                     </div>
                     <Map />
                 </main>
