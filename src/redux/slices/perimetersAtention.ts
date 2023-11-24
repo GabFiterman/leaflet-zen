@@ -30,7 +30,7 @@ const perimetersOfInterestSlice = createSlice({
     name: 'perimetersAtention',
     initialState,
     reducers: {
-        setSelectedPerimeterAtention: (state, action: PayloadAction<SelectedAttentionPerimeterState>) => {
+        setSelectPerimeterAtention: (state, action: PayloadAction<SelectedAttentionPerimeterState>) => {
             state.selectedAttentionPerimeter = action.payload;
         },
         addPerimetersAtention: (state, action: PayloadAction<AttentionPerimeter[]>) => {
@@ -42,6 +42,6 @@ const perimetersOfInterestSlice = createSlice({
     },
 });
 
-export const { addPerimeterAtention, addPerimetersAtention, setSelectedPerimeterAtention } =
+export const { addPerimeterAtention, addPerimetersAtention, setSelectPerimeterAtention } =
     perimetersOfInterestSlice.actions;
 export default perimetersOfInterestSlice.reducer;

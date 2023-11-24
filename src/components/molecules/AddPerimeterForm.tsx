@@ -1,30 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPerimeterAtention } from '../../redux/slices/perimitersAtention';
+import { addPerimeterAtention } from '../../redux/slices/perimetersAtention';
 import { Button, Input } from '../atoms';
 import axios from 'axios';
 
-const AddPointForm: React.FC = () => {
+const AddPerimeterForm: React.FC = () => {
     const dispatch = useDispatch();
+
     const selectedPerimeterAtention = useSelector((state: any) =>
         state.perimetersAtention ? state.perimetersAtention.selectedAttentionPerimeter || {} : {},
     );
 
     const [localDescription, setLocalDescription] = useState('');
 
-    const [localLatitude, setLocalLatitude] = useState(selectedPerimeterAtention?.center?.latitude?.toString() || '');
-
+    const [localLatitude, setLocalLatitude] = useState(
+        selectedPerimeterAtention?.center?.lat !== undefined ? selectedPerimeterAtention.center.lat.toString() : '',
+    );
     const [localLongitude, setLocalLongitude] = useState(
-        selectedPerimeterAtention?.center?.longitude?.toString() || '',
+        selectedPerimeterAtention?.center?.lng !== undefined ? selectedPerimeterAtention.center.lng.toString() : '',
+    );
+    const [localRadius, setLocalRadius] = useState(
+        selectedPerimeterAtention?.radius !== undefined ? selectedPerimeterAtention.radius.toString() : '',
     );
 
-    const [localRadius, setLocalRadius] = useState(selectedPerimeterAtention?.radius?.toString() || '');
-
     useEffect(() => {
+        console.log('selectedPerimeterAtention', selectedPerimeterAtention);
         if (selectedPerimeterAtention?.center && selectedPerimeterAtention?.radius) {
-            setLocalLatitude(selectedPerimeterAtention.center.latitude.toString());
-            setLocalLongitude(selectedPerimeterAtention.center.longitude.toString());
+            console.log('selectedPerimeterAtention.center', selectedPerimeterAtention.center);
+            const { latitude, longitude } = selectedPerimeterAtention.center;
+            console.log('lat', latitude);
+            console.log('lng', longitude);
+            setLocalLatitude(latitude.toString() || 'na');
+            setLocalLongitude(longitude.toString() || 'na');
             setLocalRadius(selectedPerimeterAtention.radius.toString());
         }
     }, [selectedPerimeterAtention]);
@@ -79,4 +87,4 @@ const AddPointForm: React.FC = () => {
     );
 };
 
-export default AddPointForm;
+export default AddPerimeterForm;
