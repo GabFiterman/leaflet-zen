@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 import { setSelectAreaOfInterest } from '../../redux/slices/areasOfInterest';
-import { setSelectPerimeterAtention } from '../../redux/slices/perimetersAtention';
+import { setSelectPerimeterAttention } from '../../redux/slices/perimetersAttention';
 import mapPointMarker from '../atoms/MapMarker.svg';
 
 const Map: React.FC = () => {
@@ -145,9 +145,8 @@ const Map: React.FC = () => {
                     if (type === 'circle') {
                         const center = layer.getLatLng();
                         const radius = layer.getRadius();
-                        // Converta o objeto LatLng em um objeto simples
                         const centerSimple = { latitude: center.lat, longitude: center.lng };
-                        dispatch(setSelectPerimeterAtention({ center: centerSimple, radius }));
+                        dispatch(setSelectPerimeterAttention({ center: centerSimple, radius }));
                     }
 
                     drawnItems.addLayer(layer);

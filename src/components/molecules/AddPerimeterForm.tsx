@@ -1,45 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPerimeterAtention } from '../../redux/slices/perimetersAtention';
+import { addPerimeterAttention } from '../../redux/slices/perimetersAttention';
 import { Button, Input } from '../atoms';
 import axios from 'axios';
 
 const AddPerimeterForm: React.FC = () => {
     const dispatch = useDispatch();
 
-    const selectedPerimeterAtention = useSelector((state: any) =>
-        state.perimetersAtention ? state.perimetersAtention.selectedAttentionPerimeter || {} : {},
+    const selectedPerimeterAttention = useSelector((state: any) =>
+        state.perimetersAttention ? state.perimetersAttention.selectedPerimeterAttention || {} : {},
     );
 
     const [localDescription, setLocalDescription] = useState('');
 
     const [localLatitude, setLocalLatitude] = useState(
-        selectedPerimeterAtention?.center?.lat !== undefined ? selectedPerimeterAtention.center.lat.toString() : '',
+        selectedPerimeterAttention?.center?.lat !== undefined ? selectedPerimeterAttention.center.lat.toString() : '',
     );
     const [localLongitude, setLocalLongitude] = useState(
-        selectedPerimeterAtention?.center?.lng !== undefined ? selectedPerimeterAtention.center.lng.toString() : '',
+        selectedPerimeterAttention?.center?.lng !== undefined ? selectedPerimeterAttention.center.lng.toString() : '',
     );
     const [localRadius, setLocalRadius] = useState(
-        selectedPerimeterAtention?.radius !== undefined ? selectedPerimeterAtention.radius.toString() : '',
+        selectedPerimeterAttention?.radius !== undefined ? selectedPerimeterAttention.radius.toString() : '',
     );
 
     useEffect(() => {
-        console.log('selectedPerimeterAtention', selectedPerimeterAtention);
-        if (selectedPerimeterAtention?.center && selectedPerimeterAtention?.radius) {
-            console.log('selectedPerimeterAtention.center', selectedPerimeterAtention.center);
-            const { latitude, longitude } = selectedPerimeterAtention.center;
+        console.log('selectedPerimeterAttention', selectedPerimeterAttention);
+        if (selectedPerimeterAttention?.center && selectedPerimeterAttention?.radius) {
+            console.log('selectedPerimeterAttention.center', selectedPerimeterAttention.center);
+            const { latitude, longitude } = selectedPerimeterAttention.center;
             console.log('lat', latitude);
             console.log('lng', longitude);
             setLocalLatitude(latitude.toString() || 'na');
             setLocalLongitude(longitude.toString() || 'na');
-            setLocalRadius(selectedPerimeterAtention.radius.toString());
+            setLocalRadius(selectedPerimeterAttention.radius.toString());
         }
-    }, [selectedPerimeterAtention]);
+    }, [selectedPerimeterAttention]);
 
-    const handleAddPerimeterAtention = async () => {
+    const handleAddPerimeterAttention = async () => {
         if (localLatitude.trim() !== '' && localLongitude.trim() !== '' && localRadius.trim() !== '') {
-            const newPerimeterAtention = {
+            const newPerimeterAttention = {
                 id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
                 description: localDescription,
                 center: {
@@ -50,9 +50,9 @@ const AddPerimeterForm: React.FC = () => {
             };
 
             try {
-                const endpoint = '/attentionPerimeters';
-                await axios.post(`http://localhost:3001${endpoint}`, newPerimeterAtention);
-                dispatch(addPerimeterAtention(newPerimeterAtention));
+                const endpoint = '/perimetersAttention';
+                await axios.post(`http://localhost:3001${endpoint}`, newPerimeterAttention);
+                dispatch(addPerimeterAttention(newPerimeterAttention));
                 alert('Novo perímetro adicionado com sucesso!');
             } catch (error) {
                 console.error('Error adding item:', error);
@@ -81,7 +81,7 @@ const AddPerimeterForm: React.FC = () => {
                     <Input value={localRadius} onChange={(e) => setLocalRadius(e.target.value)} />
                 </div>
 
-                <Button text="Salvar" onClick={handleAddPerimeterAtention} />
+                <Button text="Salvar" onClick={handleAddPerimeterAttention} />
             </div>
         </div>
     );

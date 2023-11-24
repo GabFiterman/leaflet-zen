@@ -3,7 +3,7 @@ import formType from './formType';
 import initialPosition from './initialPosition';
 import pointsOfInterest from './pointsOfInterest';
 import areasOfInterest from './areasOfInterest';
-import perimetersAtention from './perimetersAtention';
+import perimetersAttention from './perimetersAttention';
 
 const rootReducer = {
     currentPosition,
@@ -11,7 +11,7 @@ const rootReducer = {
     initialPosition,
     pointsOfInterest,
     areasOfInterest,
-    perimetersAtention,
+    perimetersAttention,
 };
 
 export default rootReducer;
