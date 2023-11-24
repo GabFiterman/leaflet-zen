@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 import { setSelectAreaOfInterest } from '../../redux/slices/areasOfInterest';
+import { setSelectPerimeterAtention } from '../../redux/slices/perimetersAtention';
 import mapPointMarker from '../atoms/MapMarker.svg';
 
 const Map: React.FC = () => {
@@ -107,6 +108,46 @@ const Map: React.FC = () => {
                             longitude: bounds.getSouthEast().lng,
                         };
                         dispatch(setSelectAreaOfInterest({ topLeft, bottomRight }));
+                    }
+
+                    drawnItems.addLayer(layer);
+                });
+            } else if (formType === 'AddPerimeterForm') {
+                const drawnItems = new L.FeatureGroup();
+                mapRef.current.addLayer(drawnItems);
+
+                if (drawControl.current) {
+                    mapRef.current.removeControl(drawControl.current);
+                }
+                drawControl.current = new L.Control.Draw({
+                    draw: {
+                        rectangle: false,
+                        polygon: false,
+                        polyline: false,
+                        circle: { shapeOptions: { color: '#4daf4a' } },
+                        marker: false,
+                        circlemarker: false,
+                    },
+                    position: 'topleft',
+                });
+                L.drawLocal.draw.toolbar.buttons.circle = 'Criar Perímetro';
+
+                mapRef.current.addControl(drawControl.current);
+
+                mapRef.current.off('click');
+
+                mapRef.current.on(L.Draw.Event.CREATED, function (e: any) {
+                    const type = e.layerType;
+                    const layer = e.layer;
+
+                    drawnItems.clearLayers();
+
+                    if (type === 'circle') {
+                        const center = layer.getLatLng();
+                        const radius = layer.getRadius();
+                        // Converta o objeto LatLng em um objeto simples
+                        const centerSimple = { latitude: center.lat, longitude: center.lng };
+                        dispatch(setSelectPerimeterAtention({ center: centerSimple, radius }));
                     }
 
                     drawnItems.addLayer(layer);

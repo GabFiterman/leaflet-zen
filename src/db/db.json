@@ -182,6 +182,33 @@
             },
             "radius": 7000,
             "description": "Perimeter 2"
+        },
+        {
+            "id": 170080275040265,
+            "description": "NewYork",
+            "center": {
+                "latitude": 40.7128,
+                "longitude": -74.006
+            },
+            "radius": 7000
+        },
+        {
+            "id": 170080803849655,
+            "description": "Brasília",
+            "center": {
+                "latitude": -15.776752472258941,
+                "longitude": -47.9025575348448
+            },
+            "radius": 8454.244158243897
+        },
+        {
+            "id": 17008080847237,
+            "description": "BSB",
+            "center": {
+                "latitude": -15.771131307185966,
+                "longitude": -47.873009561908965
+            },
+            "radius": 11209.286441803146
         }
     ]
 }
