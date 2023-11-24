@@ -10,7 +10,7 @@ const AddAreaOfInterestButton: React.FC = () => {
         dispatch(setFormType('AddAreaForm'));
     };
 
-    return <Button text="Pontos +" onClick={handleAddAreaOfInterest} color="invisible" />;
+    return <Button text="Áreas +" onClick={handleAddAreaOfInterest} color="invisible" />;
 };
 
 export default AddAreaOfInterestButton;
