@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import Map from '../organisms/Map';
-import { DataFetcher, InitialForm, AddPointForm } from '../molecules';
+import { DataFetcher, InitialForm, AddPointForm, AddAreaForm } from '../molecules';
 import { useSelector } from 'react-redux';
 import SideBar from '../organisms/SideBar';
-import AddAreaForm from '../molecules/AddAreaForm';
 
 function App() {
     const currentPosition = useSelector((state: any) => state.currentPosition);
