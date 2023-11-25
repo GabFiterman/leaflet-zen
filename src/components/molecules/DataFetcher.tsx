@@ -5,11 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addPointsOfInterest } from '../../redux/slices/pointsOfInterest';
 import { addInitialPosition } from '../../redux/slices/initialPosition';
+import { addAreasOfInterest } from '../../redux/slices/areasOfInterest';
+import { addperimetersAttention } from '../../redux/slices/perimetersAttention';
 
 const DataFetcher: React.FC = () => {
     const dispatch = useDispatch();
-    const pointsOfInterestData = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
     const initialPositionData = useSelector((state: any) => state.initialPosition);
+    const pointsOfInterestData = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
+    const areasOfInterestData = useSelector((state: any) => state.areasOfInterest.areasOfInterest);
+    const perimetersAttentionData = useSelector((state: any) => state.perimetersAttention.perimetersAttention);
 
     const fetchData = async (endpoint: string, action: Function) => {
         try {
@@ -21,9 +25,6 @@ const DataFetcher: React.FC = () => {
     };
 
     useEffect(() => {
-        if (pointsOfInterestData.length === 0) {
-            fetchData('/pointsOfInterest', addPointsOfInterest);
-        }
         if (
             initialPositionData.latitude === null ||
             initialPositionData.longitude === null ||
@@ -31,7 +32,25 @@ const DataFetcher: React.FC = () => {
         ) {
             fetchData('/initialPosition', addInitialPosition);
         }
-    }, [pointsOfInterestData, initialPositionData]);
+    }, [initialPositionData]);
+
+    useEffect(() => {
+        if (pointsOfInterestData.length === 0) {
+            fetchData('/pointsOfInterest', addPointsOfInterest);
+        }
+    }, [pointsOfInterestData]);
+
+    useEffect(() => {
+        if (areasOfInterestData.length === 0) {
+            fetchData('/areasOfInterest', addAreasOfInterest);
+        }
+    }, [areasOfInterestData]);
+
+    useEffect(() => {
+        if (perimetersAttentionData.length === 0) {
+            fetchData('/perimetersAttention', addperimetersAttention);
+        }
+    }, [perimetersAttentionData]);
 
     return null;
 };

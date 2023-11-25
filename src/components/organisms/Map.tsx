@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
 import { setSelectAreaOfInterest } from '../../redux/slices/areasOfInterest';
-import { setSelectPerimeterAtention } from '../../redux/slices/perimetersAtention';
+import { setSelectPerimeterAttention } from '../../redux/slices/perimetersAttention';
 import mapPointMarker from '../atoms/MapMarker.svg';
 
 const Map: React.FC = () => {
@@ -16,7 +16,9 @@ const Map: React.FC = () => {
     const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
     const formType = useSelector((state: any) => state.formType.currentForm);
-
+    const { showPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
+    const { showAreaOfInterest } = useSelector((state: any) => state.areasOfInterest);
+    const { showPerimeterAttention } = useSelector((state: any) => state.perimetersAttention);
     const dispatch = useDispatch();
 
     function handleMoveEnd() {
@@ -39,11 +41,88 @@ const Map: React.FC = () => {
             }
         }
     }
+
     const drawControl = useRef<L.Control.Draw | null>(null);
+    const markerRef = useRef<L.Marker | null>(null);
+
+    useEffect(() => {
+        if (showPointOfInterest) {
+            const mapMarkerIcon = L.icon({
+                iconUrl: mapPointMarker,
+                iconSize: [38, 95],
+                popupAnchor: [-3, -76],
+            });
+            if (mapRef.current) {
+                markerRef.current = L.marker([showPointOfInterest.latitude, showPointOfInterest.longitude], {
+                    icon: mapMarkerIcon,
+                }).addTo(mapRef.current);
+            }
+        } else if (markerRef.current) {
+            markerRef.current.remove();
+            markerRef.current = null;
+        }
+    }, [showPointOfInterest]);
+
+    const rectangleRef = useRef<L.Rectangle | null>(null);
+    useEffect(() => {
+        if (showAreaOfInterest) {
+            const { topLeft, bottomRight } = showAreaOfInterest;
+            const bounds = L.latLngBounds(
+                L.latLng(topLeft.latitude, topLeft.longitude),
+                L.latLng(bottomRight.latitude, bottomRight.longitude),
+            );
+            const rectangle = L.rectangle(bounds, {
+                color: '#272a2b',
+                weight: 1,
+                dashArray: '5, 3',
+                fillOpacity: 0.05,
+            });
+
+            if (mapRef.current) {
+                mapRef.current.addLayer(rectangle);
+                rectangleRef.current = rectangle;
+            }
+        } else if (rectangleRef.current) {
+            rectangleRef.current.remove();
+            rectangleRef.current = null;
+        }
+    }, [showAreaOfInterest]);
+
+    const perimeterAttentionRef = useRef<L.Circle | null>(null);
+
+    useEffect(() => {
+        if (showPerimeterAttention) {
+            const { center, radius } = showPerimeterAttention;
+            const circle = L.circle([center.latitude, center.longitude], {
+                color: '#104e8b',
+                fillColor: '#104e8b',
+                fillOpacity: 0.2,
+                radius: radius,
+            });
+
+            if (mapRef.current) {
+                mapRef.current.addLayer(circle);
+                perimeterAttentionRef.current = circle;
+            }
+        } else if (perimeterAttentionRef.current) {
+            perimeterAttentionRef.current.remove();
+            perimeterAttentionRef.current = null;
+        }
+    }, [showPerimeterAttention]);
+
+    useEffect(() => {
+        alert('Por favor, interaja com o mapa antes de começar a desenhar.');
+    }, []);
+
     useEffect(() => {
         if (mapRef.current) {
             mapRef.current.off('moveend');
-            mapRef.current.setView([currentPosition.latitude, currentPosition.longitude], currentPosition.zoomLevel);
+            if (currentPosition && currentPosition.latitude && currentPosition.longitude) {
+                mapRef.current.setView(
+                    [currentPosition.latitude, currentPosition.longitude],
+                    currentPosition.zoomLevel,
+                );
+            }
             mapRef.current.on('moveend', handleMoveEnd);
 
             if (formType === 'AddPointForm') {
@@ -124,7 +203,7 @@ const Map: React.FC = () => {
                         rectangle: false,
                         polygon: false,
                         polyline: false,
-                        circle: { shapeOptions: { color: '#4daf4a' } },
+                        circle: { shapeOptions: { color: '#104e8b' } },
                         marker: false,
                         circlemarker: false,
                     },
@@ -145,9 +224,8 @@ const Map: React.FC = () => {
                     if (type === 'circle') {
                         const center = layer.getLatLng();
                         const radius = layer.getRadius();
-                        // Converta o objeto LatLng em um objeto simples
                         const centerSimple = { latitude: center.lat, longitude: center.lng };
-                        dispatch(setSelectPerimeterAtention({ center: centerSimple, radius }));
+                        dispatch(setSelectPerimeterAttention({ center: centerSimple, radius }));
                     }
 
                     drawnItems.addLayer(layer);
@@ -156,7 +234,7 @@ const Map: React.FC = () => {
                 mapRef.current.off('draw:created');
             }
         }
-    }, [currentPosition, formType]);
+    }, [currentPosition, formType, showPointOfInterest, showAreaOfInterest]);
 
     useEffect(() => {
         const position =
@@ -165,8 +243,9 @@ const Map: React.FC = () => {
         if (!mapRef.current) {
             const map = L.map('map').setView([position.latitude, position.longitude], position.zoomLevel);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
+                attribution: '© GabFiterman',
             }).addTo(map);
+
             mapRef.current = map;
 
             map.on('moveend', handleMoveEnd);

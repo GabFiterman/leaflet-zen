@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Coordinates {
@@ -15,6 +16,7 @@ interface AreaOfInterest {
 interface AreaOfInterestState {
     areasOfInterest: AreaOfInterest[];
     selectedAreaOfInterest?: SelectedAreaOfInterestState | null;
+    showAreaOfInterest?: any;
 }
 
 type SelectedAreaOfInterestState = {
@@ -30,6 +32,9 @@ const areasOfInterestSlice = createSlice({
     name: 'areasOfInterest',
     initialState,
     reducers: {
+        showAreaOfInterest: (state, action: PayloadAction<SelectedAreaOfInterestState>) => {
+            state.showAreaOfInterest = action.payload;
+        },
         setSelectAreaOfInterest: (state, action: PayloadAction<SelectedAreaOfInterestState>) => {
             state.selectedAreaOfInterest = action.payload;
         },
@@ -39,8 +44,17 @@ const areasOfInterestSlice = createSlice({
         addAreaOfInterest: (state, action: PayloadAction<AreaOfInterest>) => {
             state.areasOfInterest.push(action.payload);
         },
+        clearAreaOfInterest: (state) => {
+            state.showAreaOfInterest = null;
+        },
     },
 });
 
-export const { addAreaOfInterest, addAreasOfInterest, setSelectAreaOfInterest } = areasOfInterestSlice.actions;
+export const {
+    addAreaOfInterest,
+    addAreasOfInterest,
+    setSelectAreaOfInterest,
+    showAreaOfInterest,
+    clearAreaOfInterest,
+} = areasOfInterestSlice.actions;
 export default areasOfInterestSlice.reducer;

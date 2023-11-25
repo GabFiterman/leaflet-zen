@@ -53,6 +53,7 @@ const AddPointForm: React.FC = () => {
                     latitude: parseFloat(localLatitudeBottom),
                     longitude: parseFloat(localLongitudeRight),
                 },
+                type: 'areaOfInterest',
             };
 
             try {
@@ -60,6 +61,11 @@ const AddPointForm: React.FC = () => {
                 await axios.post(`http://localhost:3001${endpoint}`, newAreaOfInterest);
                 dispatch(addAreaOfInterest(newAreaOfInterest));
                 alert('Nova área adicionada com sucesso!');
+                setLocalDescription('');
+                setLocalLatitudeTop('');
+                setLocalLongitudeLeft('');
+                setLocalLatitudeBottom('');
+                setLocalLongitudeRight('');
             } catch (error) {
                 console.error('Error adding item:', error);
             }
@@ -72,7 +78,7 @@ const AddPointForm: React.FC = () => {
             <div className="flex justify-start gap-2">
                 <div>
                     <span>Descrição: </span>
-                    <Input value={localDescription} onChange={(e) => setLocalDescription(e.target.value)} />
+                    <Input required value={localDescription} onChange={(e) => setLocalDescription(e.target.value)} />
                 </div>
                 <div>
                     <span>Latitude Superior: </span>
