@@ -1,46 +1,91 @@
-# Getting Started with Create React App
+# Leaflet-Zen
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bem-vindo ao Leaflet-Zen, um aplicativo que utiliza a biblioteca Leaflet para interações intuitivas com mapas. Este projeto é desenvolvido utilizando as seguintes tecnologias:
 
-## Available Scripts
+[![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+[![Redux](https://img.shields.io/badge/-Redux-764ABC?logo=redux&logoColor=white)](https://redux.js.org/)
+[![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Json-Server](https://img.shields.io/badge/-Json--Server-000000?logo=json&logoColor=white)](https://github.com/typicode/json-server)
+[![SCRUM](https://img.shields.io/badge/-SCRUM-95BF47?logo=scrum-alliance&logoColor=white)](https://www.scrum.org/resources/what-is-scrum)
+[![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white)](https://eslint.org/)
+[![Axios](https://img.shields.io/badge/-Axios-61DAFB?logo=axios&logoColor=white)](https://axios-http.com/)
 
-In the project directory, you can run:
 
-### `npm start`
+https://github.com/GabFiterman/leaflet-zen/assets/94033226/ce30a530-2e78-44fe-b431-899b20ef6809
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+## Instruções de Download e Execução
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> #### Nota: Certifique-se de estar utilizando o Node.js versão 18.
 
-### `npm run build`
+1. Clone o repositório:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   git clone https://github.com/GabFiterman/leaflet-zen.git
+   cd leaflet-zen
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Instale as dependências:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   npm install
 
-### `npm run eject`
+3. Inicie o servidor JSON (simula uma API) na porta 3001:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+   ```bash
+   npm run backend
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Inicie o aplicativo React:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+   ```bash
+   npm run frontend
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+5. Para corrigir problemas de formatação com Prettier (opcional)
 
-## Learn More
+   ```bash
+   npm run format
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+-------------------------------------
+# Funcionalidades do Projeto
+> Para acompanhar melhor o processo de desenvolvimento do projeto e contribuir com uma documentação mais rica, todas as PR's estão devidamente documentadas, então não deixe de conferir:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+> O projeto também contou com uma projetada organização de features utilizando Kanban, que pode ser acompanhada em meu [Board no Github](https://github.com/users/GabFiterman/projects/5/views/1)
+
+### [PR 1: Initial Config](https://github.com/GabFiterman/leaflet-zen/pull/4)
+Configurações gerais para iniciar o projeto, com destaque para:
+
+Tailwind
+TypeScript
+Redux
+EsLint
+Prettier
+
+### [PR 2: JSON-Server](https://github.com/GabFiterman/leaflet-zen/pull/5)
+Melhorias na configuração do projeto, integração do json-server para simular uma API RESTful, e aprimoramentos no gerenciamento de dados.
+
+### [PR 3: Index Map](https://github.com/GabFiterman/leaflet-zen/pull/6)
+Desenvolvimento de um formulário para configurar latitude, longitude e zoom iniciais, atualização dos inputs em tempo real, e implementação do botão de salvar configuração inicial.
+
+### [PR 4: Atomic Design](https://github.com/GabFiterman/leaflet-zen/pull/10)
+Refatoração dos componentes para seguir o Design Pattern "Atomic Design" e criação de um Hook Personalizado para lidar com a alteração dos inputs.
+
+### [PR 5: Sidebar + Interest Point](https://github.com/GabFiterman/leaflet-zen/pull/11)
+Adição de uma barra lateral com botões dedicados para retornar à posição inicial e entrar no modo de adicionar ponto de interesse. Nova funcionalidade de ponto de interesse com marcador no mapa.
+
+### [PR 6: Areas de Interesse](https://github.com/GabFiterman/leaflet-zen/pull/12)
+Introdução da funcionalidade de criar áreas de interesse no mapa, permitindo desenho direto ou entrada de coordenadas.
+
+### [PR 7: Perímetros](https://github.com/GabFiterman/leaflet-zen/pull/13)
+Adição da funcionalidade de criar perímetros de atenção no mapa, com desenho circular e integração com o Leaflet Draw.
+
+### [PR 8: View](https://github.com/GabFiterman/leaflet-zen/pull/14)
+Adição de uma lista no menu lateral para visualizar pontos, áreas e perímetros salvos, com destaque para exclusão de itens, estilização geral e melhorias de desempenho.
+
+## Bugs Conhecidos
+Infelizmente, alguns bugs ainda estão presentes, e serão abordados em futuras Issues. Recomenda-se interagir mínimamente com o mapa antes de qualquer ação para evitar problemas específicos de coordenadas.
+
+## Aviso
+Mesmo após o prazo do desafio, a intenção é continuar o desenvolvimento do projeto, abrindo Issues para correção de bugs e sugestões de melhorias.
+
+# GabFiterman, Obrigado!
