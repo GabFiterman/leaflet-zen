@@ -31,6 +31,7 @@ const AddPointForm: React.FC = () => {
                 latitude: parseFloat(localLatitude),
                 longitude: parseFloat(localLongitude),
                 zoomLevel: parseInt(localZoomLevel),
+                type: 'pointOfInterest',
             };
 
             try {

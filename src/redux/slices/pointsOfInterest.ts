@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PointOfInterest {
@@ -11,6 +12,7 @@ interface PointOfInterest {
 interface PointsOfInterestState {
     pointsOfInterest: PointOfInterest[];
     selectedPointOfInterest?: SelectedPointOfInterestState | null;
+    showPointOfInterest?: any;
 }
 
 type SelectedPointOfInterestState = {
@@ -27,6 +29,9 @@ const pointsOfInterestSlice = createSlice({
     name: 'pointsOfInterest',
     initialState,
     reducers: {
+        showPointOfInterest: (state, action: PayloadAction<SelectedPointOfInterestState>) => {
+            state.showPointOfInterest = action.payload;
+        },
         setSelectPointOfInterest: (state, action: PayloadAction<SelectedPointOfInterestState>) => {
             state.selectedPointOfInterest = action.payload;
         },
@@ -36,8 +41,17 @@ const pointsOfInterestSlice = createSlice({
         addPointOfInterest: (state, action: PayloadAction<PointOfInterest>) => {
             state.pointsOfInterest.push(action.payload);
         },
+        clearPointOfInterest: (state) => {
+            state.showPointOfInterest = null;
+        },
     },
 });
 
-export const { addPointOfInterest, addPointsOfInterest, setSelectPointOfInterest } = pointsOfInterestSlice.actions;
+export const {
+    addPointOfInterest,
+    addPointsOfInterest,
+    setSelectPointOfInterest,
+    showPointOfInterest,
+    clearPointOfInterest,
+} = pointsOfInterestSlice.actions;
 export default pointsOfInterestSlice.reducer;

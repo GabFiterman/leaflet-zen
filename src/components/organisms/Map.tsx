@@ -16,7 +16,7 @@ const Map: React.FC = () => {
     const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
     const formType = useSelector((state: any) => state.formType.currentForm);
-
+    const { showPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
     const dispatch = useDispatch();
 
     function handleMoveEnd() {
@@ -39,7 +39,32 @@ const Map: React.FC = () => {
             }
         }
     }
+
     const drawControl = useRef<L.Control.Draw | null>(null);
+
+    // Crie uma referência para armazenar o marcador
+    const markerRef = useRef<L.Marker | null>(null);
+
+    useEffect(() => {
+        if (showPointOfInterest) {
+            const mapMarkerIcon = L.icon({
+                iconUrl: mapPointMarker,
+                iconSize: [38, 95],
+                popupAnchor: [-3, -76],
+            });
+            if (mapRef.current) {
+                // Adicione o marcador ao mapa e armazene a referência na variável marker
+                markerRef.current = L.marker([showPointOfInterest.latitude, showPointOfInterest.longitude], {
+                    icon: mapMarkerIcon,
+                }).addTo(mapRef.current);
+            }
+        } else if (markerRef.current) {
+            // Se showPointOfInterest é null e o marcador existe, remova o marcador do mapa
+            markerRef.current.remove();
+            markerRef.current = null;
+        }
+    }, [showPointOfInterest]);
+
     useEffect(() => {
         if (mapRef.current) {
             mapRef.current.off('moveend');
@@ -155,7 +180,7 @@ const Map: React.FC = () => {
                 mapRef.current.off('draw:created');
             }
         }
-    }, [currentPosition, formType]);
+    }, [currentPosition, formType, showPointOfInterest]);
 
     useEffect(() => {
         const position =
@@ -164,8 +189,9 @@ const Map: React.FC = () => {
         if (!mapRef.current) {
             const map = L.map('map').setView([position.latitude, position.longitude], position.zoomLevel);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
+                attribution: '© GabFiterman',
             }).addTo(map);
+
             mapRef.current = map;
 
             map.on('moveend', handleMoveEnd);
