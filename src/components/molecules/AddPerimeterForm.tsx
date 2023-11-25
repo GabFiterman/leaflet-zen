@@ -47,6 +47,7 @@ const AddPerimeterForm: React.FC = () => {
                     longitude: parseFloat(localLongitude),
                 },
                 radius: parseFloat(localRadius),
+                type: 'perimeterAttention',
             };
 
             try {

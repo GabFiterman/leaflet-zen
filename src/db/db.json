@@ -79,7 +79,8 @@
         "latitude": -15.790194018118019,
         "longitude": -47.89424427959697
       },
-      "radius": 3160.295101323465
+      "radius": 3160.295101323465,
+      "type": "perimeterAttention"
     },
     {
       "id": 170084008303340,
@@ -88,7 +89,18 @@
         "latitude": -19.90626509078715,
         "longitude": -43.95650269351232
       },
-      "radius": 10883.188267010011
+      "radius": 10883.188267010011,
+      "type": "perimeterAttention"
+    },
+    {
+      "id": 170088619418932,
+      "description": "Cruzeiro",
+      "center": {
+        "latitude": -15.790438486777608,
+        "longitude": -47.93785954996083
+      },
+      "radius": 1322.9466092110101,
+      "type": "perimeterAttention"
     }
   ]
 }

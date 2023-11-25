@@ -5,6 +5,7 @@ import { Button } from '../atoms';
 import axios from 'axios';
 import { showPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { showAreaOfInterest, clearAreaOfInterest } from '../../redux/slices/areasOfInterest';
+import { showPerimetersAttention, clearPerimetersAttention } from '../../redux/slices/perimetersAttention';
 
 interface ItemsProps {
     itemInfo: { id: string; description: string; type: string } | object;
@@ -20,6 +21,7 @@ const ListItem: React.FC<
     const dispatch = useDispatch();
     const currentPointOfInterest = useSelector((state: any) => state.pointsOfInterest.showPointOfInterest);
     const currentAreaOfInterest = useSelector((state: any) => state.areasOfInterest.showAreaOfInterest);
+    const currentPerimeterAttention = useSelector((state: any) => state.perimetersAttention.showPerimeterAttention);
 
     const onDeleteClickHandler = async () => {
         if (window.confirm('Você realmente deseja deletar este item?')) {
@@ -92,12 +94,42 @@ const ListItem: React.FC<
         }
     };
 
+    const makeShowPerimeterAttention = () => {
+        if (itemInfo && 'center' in itemInfo && 'radius' in itemInfo) {
+            const perimeterAttention = {
+                center: itemInfo.center as { latitude: number; longitude: number },
+                radius: itemInfo.radius as number,
+            };
+
+            if (
+                currentPerimeterAttention &&
+                currentPerimeterAttention.center &&
+                currentPerimeterAttention.radius &&
+                currentPerimeterAttention.center.latitude === perimeterAttention.center.latitude &&
+                currentPerimeterAttention.center.longitude === perimeterAttention.center.longitude &&
+                currentPerimeterAttention.radius === perimeterAttention.radius
+            ) {
+                console.log('CLEAR PERIMETER ATTENTION');
+                setSelectedItemId(null);
+                dispatch(clearPerimetersAttention());
+            } else {
+                setSelectedItemId(id);
+                dispatch(clearPerimetersAttention());
+                setTimeout(() => {
+                    dispatch(showPerimetersAttention(perimeterAttention));
+                }, 100);
+            }
+        }
+    };
+
     const showItem = () => {
         console.log(itemInfo);
         if ((itemInfo as any).type === 'pointOfInterest') {
             makeShowPointOfInterest();
         } else if ((itemInfo as any).type === 'areaOfInterest') {
             makeShowAreaOfInterest();
+        } else if ((itemInfo as any).type === 'perimeterAttention') {
+            makeShowPerimeterAttention();
         }
     };
 

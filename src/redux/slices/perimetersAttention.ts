@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Center {
@@ -15,6 +16,7 @@ interface perimeterAttention {
 interface PerimeterAttentionState {
     perimetersAttention: perimeterAttention[];
     selectedPerimeterAttention?: SelectedPerimeterAttentionState | null;
+    showPerimeterAttention?: any;
 }
 
 type SelectedPerimeterAttentionState = {
@@ -30,6 +32,9 @@ const perimetersAttentionSlice = createSlice({
     name: 'perimetersAttention',
     initialState,
     reducers: {
+        showPerimetersAttention: (state, action: PayloadAction<SelectedPerimeterAttentionState>) => {
+            state.showPerimeterAttention = action.payload;
+        },
         setSelectPerimeterAttention: (state, action: PayloadAction<SelectedPerimeterAttentionState>) => {
             state.selectedPerimeterAttention = action.payload;
         },
@@ -39,9 +44,17 @@ const perimetersAttentionSlice = createSlice({
         addPerimeterAttention: (state, action: PayloadAction<perimeterAttention>) => {
             state.perimetersAttention.push(action.payload);
         },
+        clearPerimetersAttention: (state) => {
+            state.showPerimeterAttention = null;
+        },
     },
 });
 
-export const { addPerimeterAttention, addperimetersAttention, setSelectPerimeterAttention } =
-    perimetersAttentionSlice.actions;
+export const {
+    addPerimeterAttention,
+    addperimetersAttention,
+    setSelectPerimeterAttention,
+    showPerimetersAttention,
+    clearPerimetersAttention,
+} = perimetersAttentionSlice.actions;
 export default perimetersAttentionSlice.reducer;

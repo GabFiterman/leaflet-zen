@@ -18,6 +18,7 @@ const Map: React.FC = () => {
     const formType = useSelector((state: any) => state.formType.currentForm);
     const { showPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
     const { showAreaOfInterest } = useSelector((state: any) => state.areasOfInterest);
+    const { showPerimeterAttention } = useSelector((state: any) => state.perimetersAttention);
     const dispatch = useDispatch();
 
     function handleMoveEnd() {
@@ -52,13 +53,11 @@ const Map: React.FC = () => {
                 popupAnchor: [-3, -76],
             });
             if (mapRef.current) {
-                // Adicione o marcador ao mapa e armazene a referência na variável marker
                 markerRef.current = L.marker([showPointOfInterest.latitude, showPointOfInterest.longitude], {
                     icon: mapMarkerIcon,
                 }).addTo(mapRef.current);
             }
         } else if (markerRef.current) {
-            // Se showPointOfInterest é null e o marcador existe, remova o marcador do mapa
             markerRef.current.remove();
             markerRef.current = null;
         }
@@ -76,14 +75,35 @@ const Map: React.FC = () => {
 
             if (mapRef.current) {
                 mapRef.current.addLayer(rectangle);
-                rectangleRef.current = rectangle; // Armazene a referência ao retângulo
+                rectangleRef.current = rectangle;
             }
         } else if (rectangleRef.current) {
-            // Se showAreaOfInterest é null e o retângulo existe, remova o retângulo do mapa
             rectangleRef.current.remove();
             rectangleRef.current = null;
         }
     }, [showAreaOfInterest]);
+
+    const perimeterAttentionRef = useRef<L.Circle | null>(null);
+
+    useEffect(() => {
+        if (showPerimeterAttention) {
+            const { center, radius } = showPerimeterAttention;
+            const circle = L.circle([center.latitude, center.longitude], {
+                color: '#4daf4a',
+                fillColor: '#4daf4a',
+                fillOpacity: 0.5,
+                radius: radius,
+            });
+
+            if (mapRef.current) {
+                mapRef.current.addLayer(circle);
+                perimeterAttentionRef.current = circle;
+            }
+        } else if (perimeterAttentionRef.current) {
+            perimeterAttentionRef.current.remove();
+            perimeterAttentionRef.current = null;
+        }
+    }, [showPerimeterAttention]);
 
     useEffect(() => {
         if (mapRef.current) {
