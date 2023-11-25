@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "backend": "json-server --watch ./src/db/db.json --port 3001",
-        "frontend": "react-scripts start",
+        "frontend": "react-scripts start --no-prettier --no-eslint",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
@@ -26,6 +26,7 @@
         "axios": "^1.6.2",
         "json-server": "^0.17.4",
         "leaflet": "^1.9.4",
+        "leaflet-draw": "^1.0.4",
         "postcss": "^8.4.31",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
