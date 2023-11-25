@@ -71,7 +71,12 @@ const Map: React.FC = () => {
                 L.latLng(topLeft.latitude, topLeft.longitude),
                 L.latLng(bottomRight.latitude, bottomRight.longitude),
             );
-            const rectangle = L.rectangle(bounds, { color: '#ff7800', weight: 1 });
+            const rectangle = L.rectangle(bounds, {
+                color: '#272a2b',
+                weight: 1,
+                dashArray: '5, 3',
+                fillOpacity: 0.05,
+            });
 
             if (mapRef.current) {
                 mapRef.current.addLayer(rectangle);
@@ -89,9 +94,9 @@ const Map: React.FC = () => {
         if (showPerimeterAttention) {
             const { center, radius } = showPerimeterAttention;
             const circle = L.circle([center.latitude, center.longitude], {
-                color: '#4daf4a',
-                fillColor: '#4daf4a',
-                fillOpacity: 0.5,
+                color: '#104e8b',
+                fillColor: '#104e8b',
+                fillOpacity: 0.2,
                 radius: radius,
             });
 
@@ -198,7 +203,7 @@ const Map: React.FC = () => {
                         rectangle: false,
                         polygon: false,
                         polyline: false,
-                        circle: { shapeOptions: { color: '#4daf4a' } },
+                        circle: { shapeOptions: { color: '#104e8b' } },
                         marker: false,
                         circlemarker: false,
                     },
