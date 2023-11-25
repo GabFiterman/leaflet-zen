@@ -106,9 +106,18 @@ const Map: React.FC = () => {
     }, [showPerimeterAttention]);
 
     useEffect(() => {
+        alert('Por favor, interaja com o mapa antes de começar a desenhar.');
+    }, []);
+
+    useEffect(() => {
         if (mapRef.current) {
             mapRef.current.off('moveend');
-            mapRef.current.setView([currentPosition.latitude, currentPosition.longitude], currentPosition.zoomLevel);
+            if (currentPosition && currentPosition.latitude && currentPosition.longitude) {
+                mapRef.current.setView(
+                    [currentPosition.latitude, currentPosition.longitude],
+                    currentPosition.zoomLevel,
+                );
+            }
             mapRef.current.on('moveend', handleMoveEnd);
 
             if (formType === 'AddPointForm') {
