@@ -17,6 +17,7 @@ const Map: React.FC = () => {
     const initialPosition = useSelector((state: any) => state.initialPosition);
     const formType = useSelector((state: any) => state.formType.currentForm);
     const { showPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
+    const { showAreaOfInterest } = useSelector((state: any) => state.areasOfInterest);
     const dispatch = useDispatch();
 
     function handleMoveEnd() {
@@ -41,8 +42,6 @@ const Map: React.FC = () => {
     }
 
     const drawControl = useRef<L.Control.Draw | null>(null);
-
-    // Crie uma referência para armazenar o marcador
     const markerRef = useRef<L.Marker | null>(null);
 
     useEffect(() => {
@@ -64,6 +63,27 @@ const Map: React.FC = () => {
             markerRef.current = null;
         }
     }, [showPointOfInterest]);
+
+    const rectangleRef = useRef<L.Rectangle | null>(null);
+    useEffect(() => {
+        if (showAreaOfInterest) {
+            const { topLeft, bottomRight } = showAreaOfInterest;
+            const bounds = L.latLngBounds(
+                L.latLng(topLeft.latitude, topLeft.longitude),
+                L.latLng(bottomRight.latitude, bottomRight.longitude),
+            );
+            const rectangle = L.rectangle(bounds, { color: '#ff7800', weight: 1 });
+
+            if (mapRef.current) {
+                mapRef.current.addLayer(rectangle);
+                rectangleRef.current = rectangle; // Armazene a referência ao retângulo
+            }
+        } else if (rectangleRef.current) {
+            // Se showAreaOfInterest é null e o retângulo existe, remova o retângulo do mapa
+            rectangleRef.current.remove();
+            rectangleRef.current = null;
+        }
+    }, [showAreaOfInterest]);
 
     useEffect(() => {
         if (mapRef.current) {
@@ -180,7 +200,7 @@ const Map: React.FC = () => {
                 mapRef.current.off('draw:created');
             }
         }
-    }, [currentPosition, formType, showPointOfInterest]);
+    }, [currentPosition, formType, showPointOfInterest, showAreaOfInterest]);
 
     useEffect(() => {
         const position =

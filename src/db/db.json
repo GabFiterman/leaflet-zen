@@ -1,79 +1,94 @@
 {
-    "initialPosition": {
-        "latitude": -15.763812364667485,
-        "longitude": -47.76715376637694,
-        "zoomLevel": 10
+  "initialPosition": {
+    "latitude": -15.763812364667485,
+    "longitude": -47.76715376637694,
+    "zoomLevel": 10
+  },
+  "pointsOfInterest": [
+    {
+      "id": 170083748690444,
+      "description": "Brasília",
+      "latitude": -15.789307201471757,
+      "longitude": -47.88332623330844,
+      "zoomLevel": 12,
+      "type": "pointOfInterest"
     },
-    "pointsOfInterest": [
-        {
-            "id": 170083748690444,
-            "description": "Brasília",
-            "latitude": -15.789307201471757,
-            "longitude": -47.88332623330844,
-            "zoomLevel": 12,
-            "type": "pointOfInterest"
-        },
-        {
-            "id": 170084004696085,
-            "description": "BH",
-            "latitude": -19.91724385575486,
-            "longitude": -43.9530675990741,
-            "zoomLevel": 11,
-            "type": "pointOfInterest"
-        },
-        {
-            "id": 170086831305034,
-            "description": "ters",
-            "latitude": -15.751393959583003,
-            "longitude": -47.840157269073565,
-            "zoomLevel": 10,
-            "type": "pointOfInterest"
-        }
-    ],
-    "areasOfInterest": [
-        {
-            "id": 170083755897430,
-            "description": "Brasília",
-            "topLeft": {
-                "latitude": -15.782179808218206,
-                "longitude": -47.89166795876832
-            },
-            "bottomRight": {
-                "latitude": -15.807625895260122,
-                "longitude": -47.85989333521484
-            }
-        },
-        {
-            "id": 170084005978483,
-            "description": "BH",
-            "topLeft": {
-                "latitude": -19.833269248600566,
-                "longitude": -44.0636776399846
-            },
-            "bottomRight": {
-                "latitude": -20.0011738918015,
-                "longitude": -43.820472953759044
-            }
-        }
-    ],
-    "perimetersAttention": [
-        {
-            "id": 170083757154282,
-            "description": "Brasília",
-            "center": {
-                "latitude": -15.790194018118019,
-                "longitude": -47.89424427959697
-            },
-            "radius": 3160.295101323465
-        },
-        {
-            "id": 170084008303340,
-            "description": "BH",
-            "center": {
-                "latitude": -19.90626509078715,
-                "longitude": -43.95650269351232
-            },
-            "radius": 10883.188267010011
-        }
-    ]
+    {
+      "id": 170084004696085,
+      "description": "BH",
+      "latitude": -19.91724385575486,
+      "longitude": -43.9530675990741,
+      "zoomLevel": 11,
+      "type": "pointOfInterest"
+    },
+    {
+      "id": 170087898738082,
+      "description": "AsaSul",
+      "latitude": -15.82006035508966,
+      "longitude": -47.912864033238904,
+      "zoomLevel": 11,
+      "type": "pointOfInterest"
+    }
+  ],
+  "areasOfInterest": [
+    {
+      "id": 170083755897430,
+      "description": "Brasília",
+      "topLeft": {
+        "latitude": -15.782179808218206,
+        "longitude": -47.89166795876832
+      },
+      "bottomRight": {
+        "latitude": -15.807625895260122,
+        "longitude": -47.85989333521484
+      },
+      "type": "areaOfInterest"
+    },
+    {
+      "id": 170084005978483,
+      "description": "BH",
+      "topLeft": {
+        "latitude": -19.833269248600566,
+        "longitude": -44.0636776399846
+      },
+      "bottomRight": {
+        "latitude": -20.0011738918015,
+        "longitude": -43.820472953759044
+      },
+      "type": "areaOfInterest"
+    },
+    {
+      "id": 170088023425711,
+      "description": "AsaSul",
+      "topLeft": {
+        "latitude": -15.789609155316208,
+        "longitude": -47.93956596740774
+      },
+      "bottomRight": {
+        "latitude": -15.841487607899374,
+        "longitude": -47.87053937733514
+      },
+      "type": "areaOfInterest"
+    }
+  ],
+  "perimetersAttention": [
+    {
+      "id": 170083757154282,
+      "description": "Brasília",
+      "center": {
+        "latitude": -15.790194018118019,
+        "longitude": -47.89424427959697
+      },
+      "radius": 3160.295101323465
+    },
+    {
+      "id": 170084008303340,
+      "description": "BH",
+      "center": {
+        "latitude": -19.90626509078715,
+        "longitude": -43.95650269351232
+      },
+      "radius": 10883.188267010011
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import ListItem from '../molecules/ItemList';
+import ItemList from '../molecules/ItemList';
 
 interface Item {
     id: number;
@@ -24,7 +24,7 @@ const ListRenderer: React.FC<ListRendererProps> = ({ data: initialData, endpoint
     return (
         <div className="w-full">
             {data.map((item) => (
-                <ListItem
+                <ItemList
                     key={item.id}
                     endpoint={endpoint}
                     itemInfo={{ ...item, description: item.description }}

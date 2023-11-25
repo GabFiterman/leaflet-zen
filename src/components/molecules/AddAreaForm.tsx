@@ -53,6 +53,7 @@ const AddPointForm: React.FC = () => {
                     latitude: parseFloat(localLatitudeBottom),
                     longitude: parseFloat(localLongitudeRight),
                 },
+                type: 'areaOfInterest',
             };
 
             try {

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../atoms';
 import axios from 'axios';
 import { showPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
+import { showAreaOfInterest, clearAreaOfInterest } from '../../redux/slices/areasOfInterest';
 
 interface ItemsProps {
     itemInfo: { id: string; description: string; type: string } | object;
@@ -18,6 +19,7 @@ const ListItem: React.FC<
     const [id, setId] = useState('');
     const dispatch = useDispatch();
     const currentPointOfInterest = useSelector((state: any) => state.pointsOfInterest.showPointOfInterest);
+    const currentAreaOfInterest = useSelector((state: any) => state.areasOfInterest.showAreaOfInterest);
 
     const onDeleteClickHandler = async () => {
         if (window.confirm('Você realmente deseja deletar este item?')) {
@@ -31,9 +33,9 @@ const ListItem: React.FC<
         }
     };
 
-    const showItem = () => {
-        let pointOfInterest: any;
+    let pointOfInterest: any;
 
+    const makeShowPointOfInterest = () => {
         if (itemInfo && 'latitude' in itemInfo && 'longitude' in itemInfo && 'zoomLevel' in itemInfo) {
             pointOfInterest = {
                 latitude: itemInfo.latitude as number,
@@ -50,14 +52,52 @@ const ListItem: React.FC<
             currentPointOfInterest.zoomLevel === pointOfInterest.zoomLevel
         ) {
             console.log('CLEAR POINT OF INTEREST');
-            setSelectedItemId(null); // Limpe o id do item selecionado
+            setSelectedItemId(null);
             dispatch(clearPointOfInterest());
         } else if (pointOfInterest) {
-            setSelectedItemId(id); // Atualize o id do item selecionado
+            setSelectedItemId(id);
             dispatch(clearPointOfInterest());
             setTimeout(() => {
                 dispatch(showPointOfInterest(pointOfInterest));
             }, 100);
+        }
+    };
+
+    const makeShowAreaOfInterest = () => {
+        if ('topLeft' in itemInfo && 'bottomRight' in itemInfo) {
+            const areaOfInterest = {
+                topLeft: itemInfo.topLeft as { latitude: number; longitude: number },
+                bottomRight: itemInfo.bottomRight as { latitude: number; longitude: number },
+            };
+
+            if (
+                currentAreaOfInterest &&
+                currentAreaOfInterest.topLeft &&
+                currentAreaOfInterest.bottomRight &&
+                currentAreaOfInterest.topLeft.latitude === areaOfInterest.topLeft.latitude &&
+                currentAreaOfInterest.topLeft.longitude === areaOfInterest.topLeft.longitude &&
+                currentAreaOfInterest.bottomRight.latitude === areaOfInterest.bottomRight.latitude &&
+                currentAreaOfInterest.bottomRight.longitude === areaOfInterest.bottomRight.longitude
+            ) {
+                console.log('CLEAR AREA OF INTEREST');
+                setSelectedItemId(null);
+                dispatch(clearAreaOfInterest());
+            } else {
+                setSelectedItemId(id);
+                dispatch(clearAreaOfInterest());
+                setTimeout(() => {
+                    dispatch(showAreaOfInterest(areaOfInterest));
+                }, 100);
+            }
+        }
+    };
+
+    const showItem = () => {
+        console.log(itemInfo);
+        if ((itemInfo as any).type === 'pointOfInterest') {
+            makeShowPointOfInterest();
+        } else if ((itemInfo as any).type === 'areaOfInterest') {
+            makeShowAreaOfInterest();
         }
     };
 
