@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "backend": "json-server --watch ./src/db/db.json --port 3001",
         "frontend": "react-scripts start --no-prettier --no-eslint",
         "build": "react-scripts build",
         "test": "react-scripts test",

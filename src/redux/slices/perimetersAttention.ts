@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import db from '../../db/db.json';
 
 interface Center {
     latitude: number;
@@ -24,8 +25,31 @@ type SelectedPerimeterAttentionState = {
     radius: number;
 };
 
+const LS_KEY = 'leafletZenPerimetersAttention';
+
+const loadPerimetersState = (): perimeterAttention[] => {
+    try {
+        const serializedState = localStorage.getItem(LS_KEY);
+        if (serializedState === null) {
+            return db.perimetersAttention as perimeterAttention[];
+        }
+        return JSON.parse(serializedState) as perimeterAttention[];
+    } catch (err) {
+        console.error('Erro ao carregar Perimeters do LocalStorage. Usando template.', err);
+        return db.perimetersAttention as perimeterAttention[];
+    }
+};
+
+const savePerimetersState = (perimeters: perimeterAttention[]) => {
+    try {
+        localStorage.setItem(LS_KEY, JSON.stringify(perimeters));
+    } catch (err) {
+        console.error('Erro ao salvar Perimeters no LocalStorage.', err);
+    }
+};
+
 const initialState: PerimeterAttentionState = {
-    perimetersAttention: [],
+    perimetersAttention: loadPerimetersState(),
 };
 
 const perimetersAttentionSlice = createSlice({
@@ -40,12 +64,24 @@ const perimetersAttentionSlice = createSlice({
         },
         addperimetersAttention: (state, action: PayloadAction<perimeterAttention[]>) => {
             state.perimetersAttention.push(...action.payload);
+            savePerimetersState(state.perimetersAttention);
         },
         addPerimeterAttention: (state, action: PayloadAction<perimeterAttention>) => {
             state.perimetersAttention.push(action.payload);
+            savePerimetersState(state.perimetersAttention);
         },
         clearPerimetersAttention: (state) => {
             state.showPerimeterAttention = null;
+        },
+        removePerimeterAttention: (state, action: PayloadAction<number>) => {
+            const itemIdToRemove = action.payload;
+            state.perimetersAttention = state.perimetersAttention.filter(
+                (perimeter) => perimeter.id !== itemIdToRemove,
+            );
+            savePerimetersState(state.perimetersAttention);
+            if (state.showPerimeterAttention && state.showPerimeterAttention.id === itemIdToRemove) {
+                state.showPerimeterAttention = null;
+            }
         },
     },
 });
@@ -53,8 +89,9 @@ const perimetersAttentionSlice = createSlice({
 export const {
     addPerimeterAttention,
     addperimetersAttention,
+    clearPerimetersAttention,
+    removePerimeterAttention,
     setSelectPerimeterAttention,
     showPerimetersAttention,
-    clearPerimetersAttention,
 } = perimetersAttentionSlice.actions;
 export default perimetersAttentionSlice.reducer;

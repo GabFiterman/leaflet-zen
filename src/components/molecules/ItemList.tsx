@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../atoms';
-import axios from 'axios';
-import { showPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
+import { removeAreaOfInterest } from '../../redux/slices/areasOfInterest';
+import { removePerimeterAttention } from '../../redux/slices/perimetersAttention';
+import { removePointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { showAreaOfInterest, clearAreaOfInterest } from '../../redux/slices/areasOfInterest';
 import { showPerimetersAttention, clearPerimetersAttention } from '../../redux/slices/perimetersAttention';
-
+import { showPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
 interface ItemsProps {
     itemInfo: { id: string; description: string; type: string } | object;
     endpoint: string;
@@ -25,9 +26,16 @@ const ListItem: React.FC<
 
     const onDeleteClickHandler = async () => {
         if (window.confirm('Você realmente deseja deletar este item?')) {
+            const itemId = parseInt(id);
             try {
-                console.log('TRY TO DELETE');
-                await axios.delete(`http://localhost:3001/${endpoint}/${id}`);
+                if (endpoint === 'areasOfInterest') {
+                    dispatch(removeAreaOfInterest(itemId));
+                } else if (endpoint === 'pointsOfInterest') {
+                    dispatch(removePointOfInterest(itemId));
+                } else if (endpoint === 'perimetersAttention') {
+                    dispatch(removePerimeterAttention(itemId));
+                }
+
                 onDeleteClick();
             } catch (error) {
                 console.error('Erro ao deletar o item:', error);
