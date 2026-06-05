@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "frontend": "react-scripts start --no-prettier --no-eslint",
+        "backend": "json-server --watch src/db/db.json --port 3001",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",

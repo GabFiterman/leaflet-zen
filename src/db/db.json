@@ -1,67 +1,65 @@
 {
-    "initialPosition": {
-        "latitude": -15.780679493187824,
-        "longitude": -47.87567762556457,
-        "zoomLevel": 12
+  "initialPosition": {
+    "latitude": -16.678944,
+    "longitude": -49.21222,
+    "zoomLevel": 11
+  },
+  "pointsOfInterest": [
+    {
+      "id": 178062453295083,
+      "description": "Trindade",
+      "latitude": -16.659493251443266,
+      "longitude": -49.49080521966235,
+      "zoomLevel": 11,
+      "type": "pointOfInterest"
     },
-    "pointsOfInterest": [
-        {
-            "id": 170089323984736,
-            "description": "Centro BSB",
-            "latitude": -15.793938186424075,
-            "longitude": -47.881895799380764,
-            "zoomLevel": 12,
-            "type": "pointOfInterest"
-        }
-    ],
-    "areasOfInterest": [
-        {
-            "id": 170089325885593,
-            "description": "AsaSul",
-            "topLeft": {
-                "latitude": -15.796912406256943,
-                "longitude": -47.941993576807164
-            },
-            "bottomRight": {
-                "latitude": -15.842842028059666,
-                "longitude": -47.874340650218606
-            },
-            "type": "areaOfInterest"
-        },
-        {
-            "id": 17008932718792,
-            "description": "AsaNorte",
-            "topLeft": {
-                "latitude": -15.726510837528409,
-                "longitude": -47.910055900803435
-            },
-            "bottomRight": {
-                "latitude": -15.789972492048221,
-                "longitude": -47.86335134234636
-            },
-            "type": "areaOfInterest"
-        }
-    ],
-    "perimetersAttention": [
-        {
-            "id": 170089330131929,
-            "description": "LagoSul",
-            "center": {
-                "latitude": -15.83689489544165,
-                "longitude": -47.87537089783163
-            },
-            "radius": 2245.7286760034553,
-            "type": "perimeterAttention"
-        },
-        {
-            "id": 170089331375931,
-            "description": "LagoNorte",
-            "center": {
-                "latitude": -15.736097462767246,
-                "longitude": -47.860260599507264
-            },
-            "radius": 5082.77335704853,
-            "type": "perimeterAttention"
-        }
-    ]
+    {
+      "id": 178062463738227,
+      "description": "Parque Vaca Brava",
+      "latitude": -16.70956949758888,
+      "longitude": -49.27064717573608,
+      "zoomLevel": 17,
+      "type": "pointOfInterest"
+    }
+  ],
+  "areasOfInterest": [
+    {
+      "id": 178062456638323,
+      "description": "Cidade Livre - Aparecida de Goiânia",
+      "topLeft": {
+        "latitude": -16.82300241901931,
+        "longitude": -49.2904268421752
+      },
+      "bottomRight": {
+        "latitude": -16.83211810618096,
+        "longitude": -49.2767321996971
+      },
+      "type": "areaOfInterest"
+    },
+    {
+      "id": 178062458691930,
+      "description": "Área Nobre Goiânia",
+      "topLeft": {
+        "latitude": -16.69217411120279,
+        "longitude": -49.286244449938884
+      },
+      "bottomRight": {
+        "latitude": -16.713231947386156,
+        "longitude": -49.24921864143338
+      },
+      "type": "areaOfInterest"
+    }
+  ],
+  "perimetersAttention": [
+    {
+      "id": 178062454494292,
+      "description": "Senador Canedo",
+      "center": {
+        "latitude": -16.701572878300748,
+        "longitude": -49.09653689201683
+      },
+      "radius": 3044.949574780051,
+      "type": "perimeterAttention"
+    }
+  ]
 }

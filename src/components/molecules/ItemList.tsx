@@ -1,164 +1,200 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '../atoms';
-import { removeAreaOfInterest } from '../../redux/slices/areasOfInterest';
-import { removePerimeterAttention } from '../../redux/slices/perimetersAttention';
-import { removePointOfInterest } from '../../redux/slices/pointsOfInterest';
-import { showAreaOfInterest, clearAreaOfInterest } from '../../redux/slices/areasOfInterest';
-import { showPerimetersAttention, clearPerimetersAttention } from '../../redux/slices/perimetersAttention';
-import { showPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
+import axios from 'axios';
+import { setFormType } from '../../redux/slices/formType';
+import {
+    showPointOfInterest,
+    clearPointOfInterest,
+    setSelectPointOfInterest,
+    removePointOfInterest,
+    togglePointVisibility,
+} from '../../redux/slices/pointsOfInterest';
+import {
+    showAreaOfInterest,
+    clearAreaOfInterest,
+    setSelectAreaOfInterest,
+    removeAreaOfInterest,
+    toggleAreaVisibility,
+} from '../../redux/slices/areasOfInterest';
+import {
+    showPerimetersAttention,
+    clearPerimetersAttention,
+    setSelectPerimeterAttention,
+    removePerimeterAttention,
+    togglePerimeterVisibility,
+} from '../../redux/slices/perimetersAttention';
+import { useDialog } from '../../context/DialogContext';
+
 interface ItemsProps {
-    itemInfo: { id: string; description: string; type: string } | object;
+    itemInfo: any;
     endpoint: string;
-    onDeleteClick: () => void;
+    onDeleteClick?: () => void;
+    setSelectedItemId?: (id: string | null) => void;
+    selectedItemId?: string | null;
 }
 
-const ListItem: React.FC<
-    ItemsProps & { setSelectedItemId: (id: string | null) => void; selectedItemId: string | null }
-> = ({ itemInfo, endpoint, onDeleteClick, setSelectedItemId, selectedItemId }) => {
+const ListItem: React.FC<ItemsProps> = ({ itemInfo, endpoint, onDeleteClick }) => {
     const [description, setDescription] = useState('');
     const [id, setId] = useState('');
     const dispatch = useDispatch();
-    const currentPointOfInterest = useSelector((state: any) => state.pointsOfInterest.showPointOfInterest);
-    const currentAreaOfInterest = useSelector((state: any) => state.areasOfInterest.showAreaOfInterest);
-    const currentPerimeterAttention = useSelector((state: any) => state.perimetersAttention.showPerimeterAttention);
-
-    const onDeleteClickHandler = async () => {
-        if (window.confirm('Você realmente deseja deletar este item?')) {
-            const itemId = parseInt(id);
-            try {
-                if (endpoint === 'areasOfInterest') {
-                    dispatch(removeAreaOfInterest(itemId));
-                } else if (endpoint === 'pointsOfInterest') {
-                    dispatch(removePointOfInterest(itemId));
-                } else if (endpoint === 'perimetersAttention') {
-                    dispatch(removePerimeterAttention(itemId));
-                }
-
-                onDeleteClick();
-            } catch (error) {
-                console.error('Erro ao deletar o item:', error);
-            }
-        }
-    };
-
-    let pointOfInterest: any;
-
-    const makeShowPointOfInterest = () => {
-        if (itemInfo && 'latitude' in itemInfo && 'longitude' in itemInfo && 'zoomLevel' in itemInfo) {
-            pointOfInterest = {
-                latitude: itemInfo.latitude as number,
-                longitude: itemInfo.longitude as number,
-                zoomLevel: itemInfo.zoomLevel as number,
-            };
-        }
-
-        if (
-            pointOfInterest &&
-            currentPointOfInterest &&
-            currentPointOfInterest.latitude === pointOfInterest.latitude &&
-            currentPointOfInterest.longitude === pointOfInterest.longitude &&
-            currentPointOfInterest.zoomLevel === pointOfInterest.zoomLevel
-        ) {
-            console.log('CLEAR POINT OF INTEREST');
-            setSelectedItemId(null);
-            dispatch(clearPointOfInterest());
-        } else if (pointOfInterest) {
-            setSelectedItemId(id);
-            dispatch(clearPointOfInterest());
-            setTimeout(() => {
-                dispatch(showPointOfInterest(pointOfInterest));
-            }, 100);
-        }
-    };
-
-    const makeShowAreaOfInterest = () => {
-        if ('topLeft' in itemInfo && 'bottomRight' in itemInfo) {
-            const areaOfInterest = {
-                topLeft: itemInfo.topLeft as { latitude: number; longitude: number },
-                bottomRight: itemInfo.bottomRight as { latitude: number; longitude: number },
-            };
-
-            if (
-                currentAreaOfInterest &&
-                currentAreaOfInterest.topLeft &&
-                currentAreaOfInterest.bottomRight &&
-                currentAreaOfInterest.topLeft.latitude === areaOfInterest.topLeft.latitude &&
-                currentAreaOfInterest.topLeft.longitude === areaOfInterest.topLeft.longitude &&
-                currentAreaOfInterest.bottomRight.latitude === areaOfInterest.bottomRight.latitude &&
-                currentAreaOfInterest.bottomRight.longitude === areaOfInterest.bottomRight.longitude
-            ) {
-                console.log('CLEAR AREA OF INTEREST');
-                setSelectedItemId(null);
-                dispatch(clearAreaOfInterest());
-            } else {
-                setSelectedItemId(id);
-                dispatch(clearAreaOfInterest());
-                setTimeout(() => {
-                    dispatch(showAreaOfInterest(areaOfInterest));
-                }, 100);
-            }
-        }
-    };
-
-    const makeShowPerimeterAttention = () => {
-        if (itemInfo && 'center' in itemInfo && 'radius' in itemInfo) {
-            const perimeterAttention = {
-                center: itemInfo.center as { latitude: number; longitude: number },
-                radius: itemInfo.radius as number,
-            };
-
-            if (
-                currentPerimeterAttention &&
-                currentPerimeterAttention.center &&
-                currentPerimeterAttention.radius &&
-                currentPerimeterAttention.center.latitude === perimeterAttention.center.latitude &&
-                currentPerimeterAttention.center.longitude === perimeterAttention.center.longitude &&
-                currentPerimeterAttention.radius === perimeterAttention.radius
-            ) {
-                console.log('CLEAR PERIMETER ATTENTION');
-                setSelectedItemId(null);
-                dispatch(clearPerimetersAttention());
-            } else {
-                setSelectedItemId(id);
-                dispatch(clearPerimetersAttention());
-                setTimeout(() => {
-                    dispatch(showPerimetersAttention(perimeterAttention));
-                }, 100);
-            }
-        }
-    };
-
-    const showItem = () => {
-        console.log(itemInfo);
-        if ((itemInfo as any).type === 'pointOfInterest') {
-            makeShowPointOfInterest();
-        } else if ((itemInfo as any).type === 'areaOfInterest') {
-            makeShowAreaOfInterest();
-        } else if ((itemInfo as any).type === 'perimeterAttention') {
-            makeShowPerimeterAttention();
-        }
-    };
+    const { confirmDialog } = useDialog();
 
     useEffect(() => {
         if (itemInfo && 'description' in itemInfo) {
-            setDescription((itemInfo as { description: string }).description);
-            setId((itemInfo as { id: string }).id);
+            setDescription(itemInfo.description);
+            setId(itemInfo.id.toString());
         }
     }, [itemInfo]);
 
+    const selectedPoint = useSelector((state: any) => state.pointsOfInterest.selectedPointOfInterest);
+    const selectedArea = useSelector((state: any) => state.areasOfInterest.selectedAreaOfInterest);
+    const selectedPerimeter = useSelector((state: any) => state.perimetersAttention.selectedPerimeterAttention);
+
+    const hiddenPoints = useSelector((state: any) => state.pointsOfInterest.hiddenPoints || []);
+    const hiddenAreas = useSelector((state: any) => state.areasOfInterest.hiddenAreas || []);
+    const hiddenPerimeters = useSelector((state: any) => state.perimetersAttention.hiddenPerimeters || []);
+
+    const numericId = parseInt(id);
+
+    let isSelected = false;
+    if (endpoint === 'pointsOfInterest' && selectedPoint && selectedPoint.id === numericId) {
+        isSelected = true;
+    } else if (endpoint === 'areasOfInterest' && selectedArea && selectedArea.id === numericId) {
+        isSelected = true;
+    } else if (endpoint === 'perimetersAttention' && selectedPerimeter && selectedPerimeter.id === numericId) {
+        isSelected = true;
+    }
+
+    let isHidden = false;
+    if (endpoint === 'pointsOfInterest') {
+        isHidden = hiddenPoints.includes(numericId);
+    } else if (endpoint === 'areasOfInterest') {
+        isHidden = hiddenAreas.includes(numericId);
+    } else if (endpoint === 'perimetersAttention') {
+        isHidden = hiddenPerimeters.includes(numericId);
+    }
+
+    const onDeleteClickHandler = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        confirmDialog('Você realmente deseja deletar este item?', async () => {
+            if (endpoint === 'areasOfInterest') {
+                dispatch(removeAreaOfInterest(numericId));
+                dispatch(clearAreaOfInterest());
+                dispatch(setSelectAreaOfInterest(null as any));
+            } else if (endpoint === 'pointsOfInterest') {
+                dispatch(removePointOfInterest(numericId));
+                dispatch(clearPointOfInterest());
+                dispatch(setSelectPointOfInterest(null as any));
+            } else if (endpoint === 'perimetersAttention') {
+                dispatch(removePerimeterAttention(numericId));
+                dispatch(clearPerimetersAttention());
+                dispatch(setSelectPerimeterAttention(null as any));
+            }
+
+            if (isSelected) {
+                dispatch(setFormType('InitialForm'));
+            }
+            if (onDeleteClick) {
+                onDeleteClick();
+            }
+
+            try {
+                await axios.delete(`http://${window.location.hostname}:3001/${endpoint}/${numericId}`);
+            } catch (error) {
+                console.warn('API is offline, data deleted only in LocalStorage.', error);
+            }
+        });
+    };
+
+    const handleSelectToggle = () => {
+        if (isSelected) {
+            dispatch(setFormType('InitialForm'));
+
+            if (endpoint === 'pointsOfInterest') {
+                dispatch(clearPointOfInterest());
+                dispatch(setSelectPointOfInterest(null as any));
+            } else if (endpoint === 'areasOfInterest') {
+                dispatch(clearAreaOfInterest());
+                dispatch(setSelectAreaOfInterest(null as any));
+            } else if (endpoint === 'perimetersAttention') {
+                dispatch(clearPerimetersAttention());
+                dispatch(setSelectPerimeterAttention(null as any));
+            }
+        } else {
+            dispatch(clearPointOfInterest());
+            dispatch(setSelectPointOfInterest(null as any));
+            dispatch(clearAreaOfInterest());
+            dispatch(setSelectAreaOfInterest(null as any));
+            dispatch(clearPerimetersAttention());
+            dispatch(setSelectPerimeterAttention(null as any));
+
+            if (endpoint === 'pointsOfInterest') {
+                dispatch(showPointOfInterest(itemInfo));
+                dispatch(setSelectPointOfInterest(itemInfo));
+                dispatch(setFormType('AddPointForm'));
+            } else if (endpoint === 'areasOfInterest') {
+                dispatch(showAreaOfInterest(itemInfo));
+                dispatch(setSelectAreaOfInterest(itemInfo));
+                dispatch(setFormType('AddAreaForm'));
+            } else if (endpoint === 'perimetersAttention') {
+                dispatch(showPerimetersAttention(itemInfo));
+                dispatch(setSelectPerimeterAttention(itemInfo));
+                dispatch(setFormType('AddPerimeterForm'));
+            }
+        }
+    };
+
+    const handleVisibilityToggle = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (isSelected) {
+            handleSelectToggle();
+        }
+
+        if (endpoint === 'pointsOfInterest') {
+            dispatch(togglePointVisibility(numericId));
+        } else if (endpoint === 'areasOfInterest') {
+            dispatch(toggleAreaVisibility(numericId));
+        } else if (endpoint === 'perimetersAttention') {
+            dispatch(togglePerimeterVisibility(numericId));
+        }
+    };
+
     return (
-        <div className="outline outline-lightText flex flex-col items-center justify-center w-full">
-            <Button
-                text={description}
-                onClick={showItem}
-                color={id === selectedItemId ? 'highlight' : 'lightBg'}
-                trash
-                onTrashClick={onDeleteClickHandler}
-                fullWidth
-                sidebar
-            />
+        <div
+            onClick={handleSelectToggle}
+            className={`flex items-center justify-between w-full p-3 mb-2 rounded-lg cursor-pointer transition border text-sm font-semibold ${
+                isSelected
+                    ? 'bg-primary border-primary text-white shadow-md'
+                    : 'bg-white border-slate-200 hover:bg-slate-100/80 text-slate-700'
+            }`}
+        >
+            <span className="truncate max-w-[150px]">{description}</span>
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={handleVisibilityToggle}
+                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${
+                        isSelected
+                            ? 'text-white'
+                            : isHidden
+                              ? 'opacity-30 grayscale text-slate-400'
+                              : 'text-slate-600 hover:text-primary'
+                    }`}
+                    title={isHidden ? 'Visualizar no mapa' : 'Ocultar no mapa'}
+                >
+                    👁️
+                </button>
+                <button
+                    onClick={onDeleteClickHandler}
+                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${
+                        isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'
+                    }`}
+                    title="Deletar"
+                >
+                    🗑️
+                </button>
+            </div>
         </div>
     );
 };

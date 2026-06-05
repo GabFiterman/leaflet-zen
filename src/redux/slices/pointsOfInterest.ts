@@ -14,6 +14,7 @@ interface PointsOfInterestState {
     pointsOfInterest: PointOfInterest[];
     selectedPointOfInterest?: SelectedPointOfInterestState | null;
     showPointOfInterest?: any;
+    hiddenPoints: number[];
 }
 
 type SelectedPointOfInterestState = {
@@ -47,6 +48,7 @@ const savePointsState = (points: PointOfInterest[]) => {
 
 const initialState: PointsOfInterestState = {
     pointsOfInterest: loadPointsState(),
+    hiddenPoints: [],
 };
 const pointsOfInterestSlice = createSlice({
     name: 'pointsOfInterest',
@@ -57,6 +59,24 @@ const pointsOfInterestSlice = createSlice({
         },
         setSelectPointOfInterest: (state, action: PayloadAction<SelectedPointOfInterestState>) => {
             state.selectedPointOfInterest = action.payload;
+            if (action.payload && (action.payload as any).id) {
+                const id = (action.payload as any).id;
+                if (!state.hiddenPoints) {
+                    state.hiddenPoints = [];
+                }
+                state.hiddenPoints = state.hiddenPoints.filter((pId) => pId !== id);
+            }
+        },
+        togglePointVisibility: (state, action: PayloadAction<number>) => {
+            if (!state.hiddenPoints) {
+                state.hiddenPoints = [];
+            }
+            const id = action.payload;
+            if (state.hiddenPoints.includes(id)) {
+                state.hiddenPoints = state.hiddenPoints.filter((pId) => pId !== id);
+            } else {
+                state.hiddenPoints.push(id);
+            }
         },
         addPointsOfInterest: (state, action: PayloadAction<PointOfInterest[]>) => {
             state.pointsOfInterest.push(...action.payload);
@@ -78,6 +98,19 @@ const pointsOfInterestSlice = createSlice({
                 state.showPointOfInterest = null;
             }
         },
+        updatePointOfInterest: (state, action: PayloadAction<PointOfInterest>) => {
+            const index = state.pointsOfInterest.findIndex((point) => point.id === action.payload.id);
+            if (index !== -1) {
+                state.pointsOfInterest[index] = action.payload;
+                savePointsState(state.pointsOfInterest);
+            }
+            if (state.showPointOfInterest && state.showPointOfInterest.id === action.payload.id) {
+                state.showPointOfInterest = action.payload;
+            }
+            if (state.selectedPointOfInterest && (state.selectedPointOfInterest as any).id === action.payload.id) {
+                state.selectedPointOfInterest = action.payload as any;
+            }
+        },
     },
 });
 
@@ -88,5 +121,7 @@ export const {
     removePointOfInterest,
     setSelectPointOfInterest,
     showPointOfInterest,
+    updatePointOfInterest,
+    togglePointVisibility,
 } = pointsOfInterestSlice.actions;
 export default pointsOfInterestSlice.reducer;

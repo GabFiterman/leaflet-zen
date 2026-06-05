@@ -1,258 +1,716 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet-draw';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectPointOfInterest } from '../../redux/slices/pointsOfInterest';
+import { setSelectPointOfInterest, clearPointOfInterest } from '../../redux/slices/pointsOfInterest';
 import { updateCurrentPosition } from '../../redux/slices/currentPosition';
-import { setSelectAreaOfInterest } from '../../redux/slices/areasOfInterest';
-import { setSelectPerimeterAttention } from '../../redux/slices/perimetersAttention';
-import mapPointMarker from '../atoms/MapMarker.svg';
+import { setSelectAreaOfInterest, clearAreaOfInterest } from '../../redux/slices/areasOfInterest';
+import { setSelectPerimeterAttention, clearPerimetersAttention } from '../../redux/slices/perimetersAttention';
+import { setFormType } from '../../redux/slices/formType';
+
+(L as any).drawLocal = {
+    draw: {
+        toolbar: {
+            actions: {
+                title: 'Cancelar desenho',
+                text: 'Cancelar',
+            },
+            finish: {
+                title: 'Finalizar desenho',
+                text: 'Finalizar',
+            },
+            undo: {
+                title: 'Deletar último ponto desenhado',
+                text: 'Deletar último ponto',
+            },
+            buttons: {
+                polyline: 'Desenhar uma linha',
+                polygon: 'Desenhar um polígono',
+                rectangle: 'Desenhar uma área',
+                circle: 'Desenhar um perímetro',
+                marker: 'Desenhar um ponto',
+                circlemarker: 'Desenhar um marcador circular',
+            },
+        },
+        handlers: {
+            circle: {
+                tooltip: {
+                    start: 'Clique e arraste para desenhar o perímetro.',
+                },
+                radius: 'Raio',
+            },
+            circlemarker: {
+                tooltip: {
+                    start: 'Clique no mapa para posicionar o perímetro.',
+                },
+            },
+            marker: {
+                tooltip: {
+                    start: 'Clique no mapa para posicionar o ponto.',
+                },
+            },
+            polygon: {
+                tooltip: {
+                    start: 'Clique para começar a desenhar a forma.',
+                    cont: 'Clique para continuar desenhando a forma.',
+                    end: 'Clique no primeiro ponto para fechar esta forma.',
+                },
+            },
+            polyline: {
+                error: '<strong>Erro:</strong> as linhas não podem se cruzar!',
+                tooltip: {
+                    start: 'Clique para começar a desenhar a linha.',
+                    cont: 'Clique para continuar desenhando a linha.',
+                    end: 'Clique no último ponto para finalizar a linha.',
+                },
+            },
+            rectangle: {
+                tooltip: {
+                    start: 'Clique e arraste para desenhar a área.',
+                },
+            },
+            simpleshape: {
+                tooltip: {
+                    end: 'Solte o mouse para finalizar o desenho.',
+                },
+            },
+        },
+    },
+    edit: {
+        toolbar: {
+            actions: {
+                save: {
+                    title: 'Salvar alterações',
+                    text: 'Salvar',
+                },
+                cancel: {
+                    title: 'Descartar alterações',
+                    text: 'Cancelar',
+                },
+                clearAll: {
+                    title: 'Limpar todos os elementos',
+                    text: 'Limpar tudo',
+                },
+            },
+            buttons: {
+                edit: 'Editar camadas',
+                editDisabled: 'Nenhuma camada para editar',
+                remove: 'Deletar camadas',
+                removeDisabled: 'Nenhuma camada para deletar',
+            },
+        },
+        handlers: {
+            edit: {
+                tooltip: {
+                    text: 'Arraste as alças ou marcadores para editar as formas.',
+                    subtext: 'Clique em cancelar para descartar as alterações.',
+                },
+            },
+            remove: {
+                tooltip: {
+                    text: 'Clique em uma forma para removê-la.',
+                },
+            },
+        },
+    },
+};
+
+const mapPointMarkerIcon = L.divIcon({
+    html: `<div style="font-size: 28px; text-shadow: 0 1px 3px rgba(0,0,0,0.3); transform: translate(-3px, -14px);">📍</div>`,
+    className: 'custom-pin-marker',
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+});
+
+const mapPointSelectedMarkerIcon = L.divIcon({
+    html: `<div class="animate-marker-blink" style="font-size: 28px; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">📍</div>`,
+    className: 'custom-pin-marker-selected',
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+});
 
 const Map: React.FC = () => {
-    const mapRef = useRef<L.Map | null>(null);
+    const [map, setMap] = useState<L.Map | null>(null);
+    const activeDrawHandler = useRef<any>(null);
+    const previewLayerRef = useRef<any>(null);
 
     const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
     const formType = useSelector((state: any) => state.formType.currentForm);
-    const { showPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
-    const { showAreaOfInterest } = useSelector((state: any) => state.areasOfInterest);
-    const { showPerimeterAttention } = useSelector((state: any) => state.perimetersAttention);
+
+    const pointsOfInterestList = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
+    const areasOfInterestList = useSelector((state: any) => state.areasOfInterest.areasOfInterest);
+    const perimetersAttentionList = useSelector((state: any) => state.perimetersAttention.perimetersAttention);
+
+    const hiddenPoints = useSelector((state: any) => state.pointsOfInterest.hiddenPoints || []);
+    const hiddenAreas = useSelector((state: any) => state.areasOfInterest.hiddenAreas || []);
+    const hiddenPerimeters = useSelector((state: any) => state.perimetersAttention.hiddenPerimeters || []);
+
+    const { showPointOfInterest, selectedPointOfInterest } = useSelector((state: any) => state.pointsOfInterest);
+    const { showAreaOfInterest, selectedAreaOfInterest } = useSelector((state: any) => state.areasOfInterest);
+    const { showPerimeterAttention, selectedPerimeterAttention } = useSelector(
+        (state: any) => state.perimetersAttention,
+    );
     const dispatch = useDispatch();
 
-    function handleMoveEnd() {
-        if (mapRef.current) {
-            const newCenter = mapRef.current.getCenter();
-            const newZoomLevel = mapRef.current.getZoom();
+    const isEditingPoint = !!selectedPointOfInterest?.id;
+    const isEditingArea = !!selectedAreaOfInterest?.id;
+    const isEditingPerimeter = !!selectedPerimeterAttention?.id;
 
+    const pointsGroupRef = useRef<L.FeatureGroup | null>(null);
+    const areasGroupRef = useRef<L.FeatureGroup | null>(null);
+    const perimetersGroupRef = useRef<L.FeatureGroup | null>(null);
+
+    const handleMoveEnd = (e: any) => {
+        const activeMap = e.target;
+        if (activeMap) {
+            const newCenter = activeMap.getCenter();
+            const newZoomLevel = activeMap.getZoom();
             const newPosition = {
-                latitude: newCenter?.lat,
-                longitude: newCenter?.lng,
+                latitude: parseFloat(newCenter.lat.toFixed(6)),
+                longitude: parseFloat(newCenter.lng.toFixed(6)),
                 zoomLevel: newZoomLevel,
             };
-
-            if (
-                currentPosition.latitude !== newPosition.latitude ||
-                currentPosition.longitude !== newPosition.longitude ||
-                currentPosition.zoomLevel !== newPosition.zoomLevel
-            ) {
-                dispatch(updateCurrentPosition(newPosition));
-            }
+            dispatch(updateCurrentPosition(newPosition));
         }
-    }
-
-    const drawControl = useRef<L.Control.Draw | null>(null);
-    const markerRef = useRef<L.Marker | null>(null);
+    };
 
     useEffect(() => {
-        if (showPointOfInterest) {
-            const mapMarkerIcon = L.icon({
-                iconUrl: mapPointMarker,
-                iconSize: [38, 95],
-                popupAnchor: [-3, -76],
-            });
-            if (mapRef.current) {
-                markerRef.current = L.marker([showPointOfInterest.latitude, showPointOfInterest.longitude], {
-                    icon: mapMarkerIcon,
-                }).addTo(mapRef.current);
+        if (map && (formType === 'InitialForm' || !formType)) {
+            if (previewLayerRef.current) {
+                map.removeLayer(previewLayerRef.current);
+                previewLayerRef.current = null;
             }
-        } else if (markerRef.current) {
-            markerRef.current.remove();
-            markerRef.current = null;
         }
-    }, [showPointOfInterest]);
+    }, [map, formType]);
 
-    const rectangleRef = useRef<L.Rectangle | null>(null);
     useEffect(() => {
-        if (showAreaOfInterest) {
+        if (!map) return;
+
+        if (formType === 'AddPointForm') {
+            if (previewLayerRef.current) {
+                map.removeLayer(previewLayerRef.current);
+                previewLayerRef.current = null;
+            }
+            if (selectedPointOfInterest && !selectedPointOfInterest.id) {
+                const { latitude, longitude } = selectedPointOfInterest;
+                if (latitude !== undefined && longitude !== undefined && !isNaN(latitude) && !isNaN(longitude)) {
+                    previewLayerRef.current = L.marker([latitude, longitude], { icon: mapPointMarkerIcon }).addTo(map);
+                }
+            }
+        } else if (formType === 'AddAreaForm') {
+            if (previewLayerRef.current) {
+                map.removeLayer(previewLayerRef.current);
+                previewLayerRef.current = null;
+            }
+            if (selectedAreaOfInterest && !selectedAreaOfInterest.id) {
+                const { topLeft, bottomRight } = selectedAreaOfInterest;
+                if (
+                    topLeft &&
+                    bottomRight &&
+                    !isNaN(topLeft.latitude) &&
+                    !isNaN(topLeft.longitude) &&
+                    !isNaN(bottomRight.latitude) &&
+                    !isNaN(bottomRight.longitude)
+                ) {
+                    const bounds = L.latLngBounds(
+                        L.latLng(topLeft.latitude, topLeft.longitude),
+                        L.latLng(bottomRight.latitude, bottomRight.longitude),
+                    );
+                    const rect = L.rectangle(bounds, {
+                        color: '#22c55e',
+                        fillColor: '#22c55e',
+                        fillOpacity: 0.15,
+                        weight: 3,
+                    });
+                    rect.addTo(map);
+                    if ((rect as any).editing) {
+                        (rect as any).editing.enable();
+                    }
+                    rect.on('edit', () => {
+                        const newBounds = rect.getBounds();
+                        dispatch(
+                            setSelectAreaOfInterest({
+                                ...selectedAreaOfInterest,
+                                topLeft: {
+                                    latitude: newBounds.getNorthWest().lat,
+                                    longitude: newBounds.getNorthWest().lng,
+                                },
+                                bottomRight: {
+                                    latitude: newBounds.getSouthEast().lat,
+                                    longitude: newBounds.getSouthEast().lng,
+                                },
+                            }),
+                        );
+                    });
+                    previewLayerRef.current = rect;
+                }
+            }
+        } else if (formType === 'AddPerimeterForm') {
+            if (previewLayerRef.current) {
+                map.removeLayer(previewLayerRef.current);
+                previewLayerRef.current = null;
+            }
+            if (selectedPerimeterAttention && !selectedPerimeterAttention.id) {
+                const { center, radius } = selectedPerimeterAttention;
+                if (
+                    center &&
+                    radius !== undefined &&
+                    !isNaN(center.latitude) &&
+                    !isNaN(center.longitude) &&
+                    !isNaN(radius)
+                ) {
+                    const circle = L.circle([center.latitude, center.longitude], {
+                        color: '#104e8b',
+                        fillColor: '#104e8b',
+                        fillOpacity: 0.35,
+                        radius: radius,
+                        weight: 4,
+                    });
+                    circle.addTo(map);
+                    if ((circle as any).editing) {
+                        (circle as any).editing.enable();
+                    }
+                    circle.on('edit', () => {
+                        const newCenter = circle.getLatLng();
+                        const newRadius = circle.getRadius();
+                        dispatch(
+                            setSelectPerimeterAttention({
+                                ...selectedPerimeterAttention,
+                                center: { latitude: newCenter.lat, longitude: newCenter.lng },
+                                radius: newRadius,
+                            }),
+                        );
+                    });
+                    previewLayerRef.current = circle;
+                }
+            }
+        }
+    }, [map, formType, selectedPointOfInterest, selectedAreaOfInterest, selectedPerimeterAttention]);
+
+    useEffect(() => {
+        const handleFlyToInitial = () => {
+            if (map && initialPosition.latitude !== null && initialPosition.longitude !== null) {
+                map.flyTo([initialPosition.latitude, initialPosition.longitude], initialPosition.zoomLevel || 13, {
+                    duration: 0.25,
+                });
+            }
+        };
+        window.addEventListener('fly-to-initial-position', handleFlyToInitial);
+        return () => {
+            window.removeEventListener('fly-to-initial-position', handleFlyToInitial);
+        };
+    }, [map, initialPosition]);
+
+    useEffect(() => {
+        if (!map) return;
+
+        if (!pointsGroupRef.current) {
+            pointsGroupRef.current = new L.FeatureGroup().addTo(map);
+        }
+        if (!areasGroupRef.current) {
+            areasGroupRef.current = new L.FeatureGroup().addTo(map);
+        }
+        if (!perimetersGroupRef.current) {
+            perimetersGroupRef.current = new L.FeatureGroup().addTo(map);
+        }
+
+        pointsGroupRef.current.clearLayers();
+        areasGroupRef.current.clearLayers();
+        perimetersGroupRef.current.clearLayers();
+        pointsOfInterestList.forEach((point: any) => {
+            if (hiddenPoints.includes(point.id)) return; // Skip if hidden!
+
+            if (pointsGroupRef.current) {
+                const isSelected = selectedPointOfInterest && String(selectedPointOfInterest.id) === String(point.id);
+                const activePoint = isSelected ? selectedPointOfInterest : point;
+
+                const marker = L.marker([activePoint.latitude, activePoint.longitude], {
+                    icon: isSelected ? mapPointSelectedMarkerIcon : mapPointMarkerIcon,
+                    draggable: isSelected, // Dragging enabled when selected!
+                    interactive: isSelected || !(formType === 'AddPointForm' && isEditingPoint),
+                });
+
+                marker.bindPopup(`<b>Ponto:</b> ${activePoint.description}`);
+                marker.addTo(pointsGroupRef.current);
+
+                if (isSelected) {
+                    L.circle([activePoint.latitude, activePoint.longitude], {
+                        color: '#104e8b',
+                        fillColor: '#104e8b',
+                        fillOpacity: 0.25,
+                        radius: 150,
+                        weight: 3,
+                    }).addTo(pointsGroupRef.current);
+
+                    marker.on('dragend', () => {
+                        const position = marker.getLatLng();
+                        dispatch(
+                            setSelectPointOfInterest({
+                                ...activePoint,
+                                latitude: position.lat,
+                                longitude: position.lng,
+                            }),
+                        );
+                    });
+                }
+            }
+        });
+
+        areasOfInterestList.forEach((area: any) => {
+            if (hiddenAreas.includes(area.id)) return;
+
+            if (area.topLeft && area.bottomRight && areasGroupRef.current) {
+                const isSelected = selectedAreaOfInterest && String(selectedAreaOfInterest.id) === String(area.id);
+                const activeArea = isSelected ? selectedAreaOfInterest : area;
+
+                const bounds = L.latLngBounds(
+                    L.latLng(activeArea.topLeft.latitude, activeArea.topLeft.longitude),
+                    L.latLng(activeArea.bottomRight.latitude, activeArea.bottomRight.longitude),
+                );
+
+                const layer = L.rectangle(bounds, {
+                    color: '#16a34a',
+                    weight: isSelected ? 4 : 1.5,
+                    dashArray: isSelected ? '' : '5, 3',
+                    fillColor: '#16a34a',
+                    fillOpacity: isSelected ? 0.15 : 0.1,
+                    interactive: !(formType === 'AddPointForm' && isEditingPoint),
+                });
+
+                layer.bindPopup(`<b>Area:</b> ${activeArea.description}`);
+                layer.addTo(areasGroupRef.current);
+
+                if (isSelected) {
+                    if ((layer as any).editing) {
+                        (layer as any).editing.enable();
+                    }
+                    layer.on('edit', () => {
+                        const newBounds = layer.getBounds();
+                        dispatch(
+                            setSelectAreaOfInterest({
+                                ...activeArea,
+                                topLeft: {
+                                    latitude: newBounds.getNorthWest().lat,
+                                    longitude: newBounds.getNorthWest().lng,
+                                },
+                                bottomRight: {
+                                    latitude: newBounds.getSouthEast().lat,
+                                    longitude: newBounds.getSouthEast().lng,
+                                },
+                            }),
+                        );
+                    });
+                }
+            }
+        });
+
+        perimetersAttentionList.forEach((perimeter: any) => {
+            if (hiddenPerimeters.includes(perimeter.id)) return;
+
+            if (perimeter.center && perimetersGroupRef.current) {
+                const isSelected =
+                    selectedPerimeterAttention && String(selectedPerimeterAttention.id) === String(perimeter.id);
+                const activePerimeter = isSelected ? selectedPerimeterAttention : perimeter;
+
+                const layer = L.circle([activePerimeter.center.latitude, activePerimeter.center.longitude], {
+                    color: '#104e8b',
+                    fillColor: '#104e8b',
+                    fillOpacity: isSelected ? 0.35 : 0.1,
+                    radius: activePerimeter.radius,
+                    weight: isSelected ? 4 : 1.5,
+                    dashArray: isSelected ? '' : '5, 5',
+                    interactive: !(formType === 'AddPointForm' && isEditingPoint),
+                });
+
+                layer.bindPopup(
+                    `<b>Perímetro:</b> ${activePerimeter.description}<br/>Raio: ${activePerimeter.radius.toFixed(0)}m`,
+                );
+                layer.addTo(perimetersGroupRef.current);
+
+                if (isSelected) {
+                    if ((layer as any).editing) {
+                        (layer as any).editing.enable();
+                    }
+                    layer.on('edit', () => {
+                        const center = layer.getLatLng();
+                        const radius = layer.getRadius();
+                        dispatch(
+                            setSelectPerimeterAttention({
+                                ...activePerimeter,
+                                center: { latitude: center.lat, longitude: center.lng },
+                                radius,
+                            }),
+                        );
+                    });
+                }
+            }
+        });
+    }, [
+        map,
+        pointsOfInterestList,
+        areasOfInterestList,
+        perimetersAttentionList,
+        hiddenPoints,
+        hiddenAreas,
+        hiddenPerimeters,
+        showPointOfInterest,
+        showAreaOfInterest,
+        showPerimeterAttention,
+        selectedPointOfInterest,
+        selectedAreaOfInterest,
+        selectedPerimeterAttention,
+    ]);
+
+    useEffect(() => {
+        if (map && showPointOfInterest) {
+            map.flyTo(
+                [showPointOfInterest.latitude, showPointOfInterest.longitude],
+                showPointOfInterest.zoomLevel || 13,
+                { duration: 0.33 },
+            );
+        }
+    }, [map, showPointOfInterest]);
+
+    useEffect(() => {
+        if (map && showAreaOfInterest) {
             const { topLeft, bottomRight } = showAreaOfInterest;
             const bounds = L.latLngBounds(
                 L.latLng(topLeft.latitude, topLeft.longitude),
                 L.latLng(bottomRight.latitude, bottomRight.longitude),
             );
-            const rectangle = L.rectangle(bounds, {
-                color: '#272a2b',
-                weight: 1,
-                dashArray: '5, 3',
-                fillOpacity: 0.05,
-            });
-
-            if (mapRef.current) {
-                mapRef.current.addLayer(rectangle);
-                rectangleRef.current = rectangle;
-            }
-        } else if (rectangleRef.current) {
-            rectangleRef.current.remove();
-            rectangleRef.current = null;
+            map.flyToBounds(bounds, { duration: 0.25, maxZoom: 14 });
         }
-    }, [showAreaOfInterest]);
-
-    const perimeterAttentionRef = useRef<L.Circle | null>(null);
+    }, [map, showAreaOfInterest]);
 
     useEffect(() => {
-        if (showPerimeterAttention) {
+        if (map && showPerimeterAttention) {
             const { center, radius } = showPerimeterAttention;
-            const circle = L.circle([center.latitude, center.longitude], {
-                color: '#104e8b',
-                fillColor: '#104e8b',
-                fillOpacity: 0.2,
-                radius: radius,
-            });
-
-            if (mapRef.current) {
-                mapRef.current.addLayer(circle);
-                perimeterAttentionRef.current = circle;
-            }
-        } else if (perimeterAttentionRef.current) {
-            perimeterAttentionRef.current.remove();
-            perimeterAttentionRef.current = null;
+            const centerLatLng = L.latLng(center.latitude, center.longitude);
+            const tempCircle = L.circle(centerLatLng, { radius }).addTo(map);
+            const bounds = tempCircle.getBounds();
+            tempCircle.remove();
+            map.flyToBounds(bounds, { duration: 0.33, maxZoom: 14 });
         }
-    }, [showPerimeterAttention]);
+    }, [map, showPerimeterAttention]);
 
     useEffect(() => {
-        alert('Por favor, interaja com o mapa antes de começar a desenhar.');
-    }, []);
-
-    useEffect(() => {
-        if (mapRef.current) {
-            mapRef.current.off('moveend');
-            if (currentPosition && currentPosition.latitude && currentPosition.longitude) {
-                mapRef.current.setView(
-                    [currentPosition.latitude, currentPosition.longitude],
-                    currentPosition.zoomLevel,
-                );
+        if (map) {
+            map.off('click');
+            map.off('mousemove');
+            if (activeDrawHandler.current) {
+                activeDrawHandler.current.disable();
+                activeDrawHandler.current = null;
             }
-            mapRef.current.on('moveend', handleMoveEnd);
+
+            const mapPointMarkerIcon = L.divIcon({
+                html: `<div style="font-size: 28px; text-shadow: 0 1px 3px rgba(0,0,0,0.3); transform: translate(-3px, -14px);">📍</div>`,
+                className: 'custom-pin-marker',
+                iconSize: [28, 28],
+                iconAnchor: [14, 28],
+            });
 
             if (formType === 'AddPointForm') {
-                let marker: L.Marker | null = null;
-                mapRef.current.on('click', function (e) {
+                const tooltip = new (L as any).Draw.Tooltip(map);
+                tooltip.updateContent({
+                    text: isEditingPoint
+                        ? 'Clique no mapa para alterar a localização do ponto.'
+                        : 'Clique no mapa para posicionar o ponto.',
+                });
+
+                const handleMouseMove = (e: any) => {
+                    tooltip.updatePosition(e.latlng);
+                };
+
+                map.on('mousemove', handleMouseMove);
+
+                map.on('click', function (e) {
                     const { lat, lng } = e.latlng;
                     dispatch(
                         setSelectPointOfInterest({
+                            ...selectedPointOfInterest,
                             latitude: lat,
                             longitude: lng,
-                            zoomLevel: currentPosition.zoomLevel,
+                            zoomLevel: map.getZoom() || currentPosition.zoomLevel,
                         }),
                     );
-                    if (mapRef.current) {
-                        if (marker) {
-                            mapRef.current.removeLayer(marker);
+
+                    if (!isEditingPoint) {
+                        if (previewLayerRef.current) {
+                            map.removeLayer(previewLayerRef.current);
                         }
-                        const mapMarkerIcon = L.icon({
-                            iconUrl: mapPointMarker,
-                            iconSize: [38, 95],
-                            popupAnchor: [-3, -76],
-                        });
-                        marker = L.marker([lat, lng], { icon: mapMarkerIcon }).addTo(mapRef.current);
+                        const marker = L.marker([lat, lng], { icon: mapPointMarkerIcon }).addTo(map);
+                        previewLayerRef.current = marker;
                     }
                 });
-            } else if (formType === 'AddAreaForm') {
-                const drawnItems = new L.FeatureGroup();
-                mapRef.current.addLayer(drawnItems);
 
-                if (drawControl.current) {
-                    mapRef.current.removeControl(drawControl.current);
-                }
-
-                drawControl.current = new L.Control.Draw({
-                    draw: {
-                        rectangle: {},
-                        polygon: false,
-                        polyline: false,
-                        circle: false,
-                        marker: false,
-                        circlemarker: false,
+                return () => {
+                    map.off('mousemove', handleMouseMove);
+                    map.off('click');
+                    tooltip.dispose();
+                };
+            } else if (formType === 'AddAreaForm' && !isEditingArea) {
+                const handler = new L.Draw.Rectangle(map as any, {
+                    shapeOptions: {
+                        color: '#16a34a',
+                        weight: 2,
+                        dashArray: '5, 5',
+                        fillColor: '#16a34a',
+                        fillOpacity: 0.1,
                     },
-                    position: 'topleft',
                 });
-                L.drawLocal.draw.toolbar.buttons.rectangle = 'Criar Área';
-
-                mapRef.current.addControl(drawControl.current);
-
-                mapRef.current.off('click');
-
-                mapRef.current.on(L.Draw.Event.CREATED, function (e: any) {
-                    const type = e.layerType;
-                    const layer = e.layer;
-
-                    drawnItems.clearLayers();
-
-                    if (type === 'rectangle') {
-                        const bounds = layer.getBounds();
-                        const topLeft = { latitude: bounds.getNorthWest().lat, longitude: bounds.getNorthWest().lng };
-                        const bottomRight = {
-                            latitude: bounds.getSouthEast().lat,
-                            longitude: bounds.getSouthEast().lng,
-                        };
-                        dispatch(setSelectAreaOfInterest({ topLeft, bottomRight }));
-                    }
-
-                    drawnItems.addLayer(layer);
-                });
-            } else if (formType === 'AddPerimeterForm') {
-                const drawnItems = new L.FeatureGroup();
-                mapRef.current.addLayer(drawnItems);
-
-                if (drawControl.current) {
-                    mapRef.current.removeControl(drawControl.current);
-                }
-                drawControl.current = new L.Control.Draw({
-                    draw: {
-                        rectangle: false,
-                        polygon: false,
-                        polyline: false,
-                        circle: { shapeOptions: { color: '#104e8b' } },
-                        marker: false,
-                        circlemarker: false,
+                activeDrawHandler.current = handler;
+                handler.enable();
+            } else if (formType === 'AddPerimeterForm' && !isEditingPerimeter) {
+                const handler = new L.Draw.Circle(map as any, {
+                    shapeOptions: {
+                        color: '#104e8b',
+                        fillColor: '#104e8b',
+                        fillOpacity: 0.15,
                     },
-                    position: 'topleft',
                 });
-                L.drawLocal.draw.toolbar.buttons.circle = 'Criar Perímetro';
-
-                mapRef.current.addControl(drawControl.current);
-
-                mapRef.current.off('click');
-
-                mapRef.current.on(L.Draw.Event.CREATED, function (e: any) {
-                    const type = e.layerType;
-                    const layer = e.layer;
-
-                    drawnItems.clearLayers();
-
-                    if (type === 'circle') {
-                        const center = layer.getLatLng();
-                        const radius = layer.getRadius();
-                        const centerSimple = { latitude: center.lat, longitude: center.lng };
-                        dispatch(setSelectPerimeterAttention({ center: centerSimple, radius }));
-                    }
-
-                    drawnItems.addLayer(layer);
-                });
-            } else if (formType !== 'AddAreaForm') {
-                mapRef.current.off('draw:created');
+                activeDrawHandler.current = handler;
+                handler.enable();
             }
         }
-    }, [currentPosition, formType, showPointOfInterest, showAreaOfInterest]);
+    }, [map, formType, isEditingPoint, isEditingArea, isEditingPerimeter, dispatch]);
 
+    // Initial map setup
     useEffect(() => {
         const position =
             currentPosition.latitude !== null && currentPosition.longitude !== null ? currentPosition : initialPosition;
 
-        if (!mapRef.current) {
-            const map = L.map('map').setView([position.latitude, position.longitude], position.zoomLevel);
+        if (!map) {
+            const mapInstance = L.map('map', { zoomControl: false }).setView(
+                [position.latitude, position.longitude],
+                position.zoomLevel,
+            );
+            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© GabFiterman',
-            }).addTo(map);
+            }).addTo(mapInstance);
 
-            mapRef.current = map;
+            setMap(mapInstance);
 
-            map.on('moveend', handleMoveEnd);
+            dispatch(
+                updateCurrentPosition({
+                    latitude: position.latitude,
+                    longitude: position.longitude,
+                    zoomLevel: position.zoomLevel,
+                }),
+            );
+
+            mapInstance.on('moveend', handleMoveEnd);
+
+            mapInstance.on(L.Draw.Event.CREATED, function (e: any) {
+                const type = e.layerType;
+                const layer = e.layer;
+
+                if (previewLayerRef.current) {
+                    mapInstance.removeLayer(previewLayerRef.current);
+                }
+
+                previewLayerRef.current = layer;
+                layer.addTo(mapInstance);
+
+                if (type === 'rectangle') {
+                    layer.setStyle({
+                        color: '#22c55e',
+                        fillColor: '#22c55e',
+                        fillOpacity: 0.15,
+                        weight: 3,
+                    });
+                    if ((layer as any).editing) {
+                        (layer as any).editing.enable();
+                    }
+                    const updateCoords = () => {
+                        const bounds = layer.getBounds();
+                        dispatch(
+                            setSelectAreaOfInterest({
+                                topLeft: { latitude: bounds.getNorthWest().lat, longitude: bounds.getNorthWest().lng },
+                                bottomRight: {
+                                    latitude: bounds.getSouthEast().lat,
+                                    longitude: bounds.getSouthEast().lng,
+                                },
+                            }),
+                        );
+                    };
+                    updateCoords();
+                    layer.on('edit', updateCoords);
+                } else if (type === 'circle') {
+                    if ((layer as any).editing) {
+                        (layer as any).editing.enable();
+                    }
+                    const updateCoords = () => {
+                        const center = layer.getLatLng();
+                        const radius = layer.getRadius();
+                        dispatch(
+                            setSelectPerimeterAttention({
+                                center: { latitude: center.lat, longitude: center.lng },
+                                radius,
+                            }),
+                        );
+                    };
+                    updateCoords();
+                    layer.on('edit', updateCoords);
+                }
+            });
         }
-    }, [currentPosition, initialPosition, dispatch]);
+    }, [dispatch]);
 
-    return <div id="map" className="h-5/6" />;
+    const handleStartDrawing = (type: any) => {
+        dispatch(clearPointOfInterest());
+        dispatch(setSelectPointOfInterest(null as any));
+        dispatch(clearAreaOfInterest());
+        dispatch(setSelectAreaOfInterest(null as any));
+        dispatch(clearPerimetersAttention());
+        dispatch(setSelectPerimeterAttention(null as any));
+
+        dispatch(setFormType(type));
+    };
+
+    return (
+        <div className="relative w-full h-full min-h-[400px]">
+            <div id="map" className="h-full w-full rounded-lg shadow-md" />
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex flex-row items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg border border-slate-200 max-w-[90vw] overflow-x-auto">
+                <span className="text-xs font-bold text-slate-700 whitespace-nowrap hidden sm:inline border-r pr-2 mr-1">
+                    Desenhar:
+                </span>
+                <button
+                    onClick={() => handleStartDrawing('AddPointForm')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddPointForm' && !isEditingPoint
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
+                >
+                    <span>📍</span> Ponto
+                </button>
+                <button
+                    onClick={() => handleStartDrawing('AddAreaForm')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddAreaForm' && !isEditingArea
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
+                >
+                    <span>🟩</span> Área
+                </button>
+                <button
+                    onClick={() => handleStartDrawing('AddPerimeterForm')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddPerimeterForm' && !isEditingPerimeter
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
+                >
+                    <span>🔵</span> Perímetro
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default Map;

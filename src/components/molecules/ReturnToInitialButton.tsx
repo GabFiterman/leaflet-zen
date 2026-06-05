@@ -22,6 +22,7 @@ const ReturnToInitialButton: React.FC<ButtonProps> = ({
     const handleReturnToInitial = () => {
         dispatch(updateCurrentPosition(initialPosition));
         dispatch(setFormType('InitialForm'));
+        window.dispatchEvent(new CustomEvent('fly-to-initial-position'));
     };
 
     return <Button fullWidth text={text} color={color} bold={bold} onClick={handleReturnToInitial} paddingY="2" />;
