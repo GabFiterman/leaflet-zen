@@ -105,7 +105,6 @@ select {
 }
 
 @keyframes marker-blink {
-
     0%,
     100% {
         opacity: 1;

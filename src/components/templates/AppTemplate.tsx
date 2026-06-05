@@ -54,8 +54,9 @@ function App() {
                 </header>
 
                 <nav
-                    className={`bg-white/95 backdrop-blur-sm macro-sidebar fixed md:static inset-y-0 left-0 z-[4000] transform transition-transform duration-300 ease-in-out md:translate-x-0 w-72 flex flex-col h-full md:h-[calc(100vh-2rem)] md:m-4 md:rounded-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                        }`}
+                    className={`bg-white/95 backdrop-blur-sm macro-sidebar fixed md:static inset-y-0 left-0 z-[4000] transform transition-transform duration-300 ease-in-out md:translate-x-0 w-72 flex flex-col h-full md:h-[calc(100vh-2rem)] md:m-4 md:rounded-2xl ${
+                        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}
                 >
                     <div className="relative h-full flex flex-col">
                         <button

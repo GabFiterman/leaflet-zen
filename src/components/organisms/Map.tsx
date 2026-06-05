@@ -637,28 +637,31 @@ const Map: React.FC = () => {
                 </span>
                 <button
                     onClick={() => handleStartDrawing('AddPointForm')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${formType === 'AddPointForm' && !isEditingPoint
-                        ? 'bg-primary border-primary text-white shadow-sm'
-                        : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                        }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddPointForm' && !isEditingPoint
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
                 >
                     <span>📍</span> Ponto
                 </button>
                 <button
                     onClick={() => handleStartDrawing('AddAreaForm')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${formType === 'AddAreaForm' && !isEditingArea
-                        ? 'bg-primary border-primary text-white shadow-sm'
-                        : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                        }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddAreaForm' && !isEditingArea
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
                 >
                     <span>🟩</span> Área
                 </button>
                 <button
                     onClick={() => handleStartDrawing('AddPerimeterForm')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${formType === 'AddPerimeterForm' && !isEditingPerimeter
-                        ? 'bg-primary border-primary text-white shadow-sm'
-                        : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                        }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition font-semibold border whitespace-nowrap ${
+                        formType === 'AddPerimeterForm' && !isEditingPerimeter
+                            ? 'bg-primary border-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                    }`}
                 >
                     <span>🔵</span> Perímetro
                 </button>

@@ -164,29 +164,32 @@ const ListItem: React.FC<ItemsProps> = ({ itemInfo, endpoint, onDeleteClick }) =
     return (
         <div
             onClick={handleSelectToggle}
-            className={`flex items-center justify-between w-full p-3 mb-2 rounded-lg cursor-pointer transition border text-sm font-semibold ${isSelected
+            className={`flex items-center justify-between w-full p-3 mb-2 rounded-lg cursor-pointer transition border text-sm font-semibold ${
+                isSelected
                     ? 'bg-primary border-primary text-white shadow-md'
                     : 'bg-white border-slate-200 hover:bg-slate-100/80 text-slate-700'
-                }`}
+            }`}
         >
             <span className="truncate max-w-[150px]">{description}</span>
             <div className="flex items-center gap-2">
                 <button
                     onClick={handleVisibilityToggle}
-                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${isSelected
+                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${
+                        isSelected
                             ? 'text-white'
                             : isHidden
-                                ? 'opacity-30 grayscale text-slate-400'
-                                : 'text-slate-600 hover:text-primary'
-                        }`}
+                              ? 'opacity-30 grayscale text-slate-400'
+                              : 'text-slate-600 hover:text-primary'
+                    }`}
                     title={isHidden ? 'Visualizar no mapa' : 'Ocultar no mapa'}
                 >
                     👁️
                 </button>
                 <button
                     onClick={onDeleteClickHandler}
-                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'
-                        }`}
+                    className={`p-1 rounded hover:scale-110 transition drop-shadow-[2px_2px_1px_rgba(0,0,0,0.5)] ${
+                        isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'
+                    }`}
                     title="Deletar"
                 >
                     🗑️
