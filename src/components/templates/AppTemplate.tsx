@@ -7,12 +7,8 @@ import SideBar from '../organisms/SideBar';
 import InitialInfoPopup from '../molecules/InitialInfoPopup';
 
 function App() {
-    const currentPosition = useSelector((state: any) => state.currentPosition);
     const initialPosition = useSelector((state: any) => state.initialPosition);
     const currentForm = useSelector((state: any) => state.formType.currentForm);
-    const areasOfInterest = useSelector((state: any) => state.areasOfInterest.areasOfInterest);
-    const pointsOfInterest = useSelector((state: any) => state.pointsOfInterest.pointsOfInterest);
-    const perimetersAttention = useSelector((state: any) => state.perimetersAttention.perimetersAttention);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,14 +17,11 @@ function App() {
         if (
             initialPosition.latitude !== null &&
             initialPosition.longitude !== null &&
-            initialPosition.zoomLevel !== null &&
-            areasOfInterest.length !== 0 &&
-            pointsOfInterest.length !== 0 &&
-            perimetersAttention.length !== 0
+            initialPosition.zoomLevel !== null
         ) {
             setIsLoading(false);
         }
-    }, [initialPosition, currentPosition, areasOfInterest, pointsOfInterest, perimetersAttention]);
+    }, [initialPosition]);
 
     if (isLoading) {
         return (

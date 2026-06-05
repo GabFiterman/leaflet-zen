@@ -105,41 +105,44 @@ const AddPointForm: React.FC = () => {
 
     const handleSavePointOfInterest = async () => {
         if (localLatitude.trim() !== '' && localLongitude.trim() !== '' && localZoomLevel.trim() !== '') {
-            try {
-                if (isEditMode) {
-                    const updatedItem = {
-                        id: selectedPointOfInterest.id,
-                        description: localDescription,
-                        latitude: parseFloat(localLatitude),
-                        longitude: parseFloat(localLongitude),
-                        zoomLevel: parseInt(localZoomLevel),
-                        type: 'pointOfInterest',
-                    };
+            if (isEditMode) {
+                const updatedItem = {
+                    id: selectedPointOfInterest.id,
+                    description: localDescription,
+                    latitude: parseFloat(localLatitude),
+                    longitude: parseFloat(localLongitude),
+                    zoomLevel: parseInt(localZoomLevel),
+                    type: 'pointOfInterest',
+                };
+                dispatch(updatePointOfInterest(updatedItem));
+                alertDialog('Ponto atualizado com sucesso!');
+
+                try {
                     await axiosInstance.put(
                         `http://${window.location.hostname}:3001/pointsOfInterest/${selectedPointOfInterest.id}`,
                         updatedItem,
                     );
-                    dispatch(updatePointOfInterest(updatedItem));
-                    alertDialog('Ponto atualizado com sucesso!');
-                } else {
-                    const newItem = {
-                        id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
-                        description: localDescription,
-                        latitude: parseFloat(localLatitude),
-                        longitude: parseFloat(localLongitude),
-                        zoomLevel: parseInt(localZoomLevel),
-                        type: 'pointOfInterest',
-                    };
-                    await axiosInstance.post(`http://${window.location.hostname}:3001/pointsOfInterest`, newItem);
-                    dispatch(addPointOfInterest(newItem));
-                    alertDialog('Novo ponto adicionado com sucesso!');
-                    setLocalDescription('');
-                    setLocalLatitude('');
-                    setLocalLongitude('');
-                    setLocalZoomLevel('');
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
                 }
-            } catch (error) {
-                console.error('Error saving item:', error);
+            } else {
+                const newItem = {
+                    id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
+                    description: localDescription,
+                    latitude: parseFloat(localLatitude),
+                    longitude: parseFloat(localLongitude),
+                    zoomLevel: parseInt(localZoomLevel),
+                    type: 'pointOfInterest',
+                };
+                dispatch(addPointOfInterest(newItem));
+                alertDialog('Novo ponto adicionado com sucesso!');
+                dispatch(setSelectPointOfInterest(newItem));
+
+                try {
+                    await axiosInstance.post(`http://${window.location.hostname}:3001/pointsOfInterest`, newItem);
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
+                }
             }
         }
     };
@@ -156,16 +159,18 @@ const AddPointForm: React.FC = () => {
         }
     };
 
-    const isSaveEnabled = isEditMode
-        ? originalItem &&
-          (localDescription !== (originalItem.description || '') ||
-              parseFloat(localLatitude) !== originalItem.latitude ||
-              parseFloat(localLongitude) !== originalItem.longitude ||
-              parseInt(localZoomLevel) !== originalItem.zoomLevel)
-        : localDescription.trim() !== '' &&
-          localLatitude.trim() !== '' &&
-          localLongitude.trim() !== '' &&
-          localZoomLevel.trim() !== '';
+    const isSaveEnabled =
+        localDescription.trim() !== '' &&
+        localLatitude.trim() !== '' &&
+        localLongitude.trim() !== '' &&
+        localZoomLevel.trim() !== '' &&
+        (isEditMode
+            ? originalItem &&
+              (localDescription !== (originalItem.description || '') ||
+                  parseFloat(localLatitude) !== originalItem.latitude ||
+                  parseFloat(localLongitude) !== originalItem.longitude ||
+                  parseInt(localZoomLevel) !== originalItem.zoomLevel)
+            : true);
 
     return (
         <div className="w-full">

@@ -219,12 +219,33 @@ const Map: React.FC = () => {
                         L.latLng(topLeft.latitude, topLeft.longitude),
                         L.latLng(bottomRight.latitude, bottomRight.longitude),
                     );
-                    previewLayerRef.current = L.rectangle(bounds, {
-                        color: '#16a34a',
-                        fillColor: '#16a34a',
+                    const rect = L.rectangle(bounds, {
+                        color: '#22c55e',
+                        fillColor: '#22c55e',
                         fillOpacity: 0.15,
-                        weight: 4,
-                    }).addTo(map);
+                        weight: 3,
+                    });
+                    rect.addTo(map);
+                    if ((rect as any).editing) {
+                        (rect as any).editing.enable();
+                    }
+                    rect.on('edit', () => {
+                        const newBounds = rect.getBounds();
+                        dispatch(
+                            setSelectAreaOfInterest({
+                                ...selectedAreaOfInterest,
+                                topLeft: {
+                                    latitude: newBounds.getNorthWest().lat,
+                                    longitude: newBounds.getNorthWest().lng,
+                                },
+                                bottomRight: {
+                                    latitude: newBounds.getSouthEast().lat,
+                                    longitude: newBounds.getSouthEast().lng,
+                                },
+                            }),
+                        );
+                    });
+                    previewLayerRef.current = rect;
                 }
             }
         } else if (formType === 'AddPerimeterForm') {
@@ -241,13 +262,29 @@ const Map: React.FC = () => {
                     !isNaN(center.longitude) &&
                     !isNaN(radius)
                 ) {
-                    previewLayerRef.current = L.circle([center.latitude, center.longitude], {
+                    const circle = L.circle([center.latitude, center.longitude], {
                         color: '#104e8b',
                         fillColor: '#104e8b',
                         fillOpacity: 0.35,
                         radius: radius,
                         weight: 4,
-                    }).addTo(map);
+                    });
+                    circle.addTo(map);
+                    if ((circle as any).editing) {
+                        (circle as any).editing.enable();
+                    }
+                    circle.on('edit', () => {
+                        const newCenter = circle.getLatLng();
+                        const newRadius = circle.getRadius();
+                        dispatch(
+                            setSelectPerimeterAttention({
+                                ...selectedPerimeterAttention,
+                                center: { latitude: newCenter.lat, longitude: newCenter.lng },
+                                radius: newRadius,
+                            }),
+                        );
+                    });
+                    previewLayerRef.current = circle;
                 }
             }
         }
@@ -579,6 +616,12 @@ const Map: React.FC = () => {
                 layer.addTo(mapInstance);
 
                 if (type === 'rectangle') {
+                    layer.setStyle({
+                        color: '#22c55e',
+                        fillColor: '#22c55e',
+                        fillOpacity: 0.15,
+                        weight: 3,
+                    });
                     if ((layer as any).editing) {
                         (layer as any).editing.enable();
                     }

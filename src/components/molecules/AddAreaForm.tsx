@@ -151,52 +151,54 @@ const AddAreaForm: React.FC = () => {
             localLatitudeBottom.trim() !== '' &&
             localLongitudeRight.trim() !== ''
         ) {
-            try {
-                if (isEditMode) {
-                    const updatedItem = {
-                        id: selectedAreaOfInterest.id,
-                        description: localDescription,
-                        topLeft: {
-                            latitude: parseFloat(localLatitudeTop),
-                            longitude: parseFloat(localLongitudeLeft),
-                        },
-                        bottomRight: {
-                            latitude: parseFloat(localLatitudeBottom),
-                            longitude: parseFloat(localLongitudeRight),
-                        },
-                        type: 'areaOfInterest',
-                    };
+            if (isEditMode) {
+                const updatedItem = {
+                    id: selectedAreaOfInterest.id,
+                    description: localDescription,
+                    topLeft: {
+                        latitude: parseFloat(localLatitudeTop),
+                        longitude: parseFloat(localLongitudeLeft),
+                    },
+                    bottomRight: {
+                        latitude: parseFloat(localLatitudeBottom),
+                        longitude: parseFloat(localLongitudeRight),
+                    },
+                    type: 'areaOfInterest',
+                };
+                dispatch(updateAreaOfInterest(updatedItem));
+                alertDialog('Área atualizada com sucesso!');
+
+                try {
                     await axiosInstance.put(
                         `http://${window.location.hostname}:3001/areasOfInterest/${selectedAreaOfInterest.id}`,
                         updatedItem,
                     );
-                    dispatch(updateAreaOfInterest(updatedItem));
-                    alertDialog('Área atualizada com sucesso!');
-                } else {
-                    const newItem = {
-                        id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
-                        description: localDescription,
-                        topLeft: {
-                            latitude: parseFloat(localLatitudeTop),
-                            longitude: parseFloat(localLongitudeLeft),
-                        },
-                        bottomRight: {
-                            latitude: parseFloat(localLatitudeBottom),
-                            longitude: parseFloat(localLongitudeRight),
-                        },
-                        type: 'areaOfInterest',
-                    };
-                    await axiosInstance.post(`http://${window.location.hostname}:3001/areasOfInterest`, newItem);
-                    dispatch(addAreaOfInterest(newItem));
-                    alertDialog('Nova área adicionada com sucesso!');
-                    setLocalDescription('');
-                    setLocalLatitudeTop('');
-                    setLocalLongitudeLeft('');
-                    setLocalLatitudeBottom('');
-                    setLocalLongitudeRight('');
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
                 }
-            } catch (error) {
-                console.error('Error saving item:', error);
+            } else {
+                const newItem = {
+                    id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
+                    description: localDescription,
+                    topLeft: {
+                        latitude: parseFloat(localLatitudeTop),
+                        longitude: parseFloat(localLongitudeLeft),
+                    },
+                    bottomRight: {
+                        latitude: parseFloat(localLatitudeBottom),
+                        longitude: parseFloat(localLongitudeRight),
+                    },
+                    type: 'areaOfInterest',
+                };
+                dispatch(addAreaOfInterest(newItem));
+                alertDialog('Nova área adicionada com sucesso!');
+                dispatch(setSelectAreaOfInterest(newItem));
+
+                try {
+                    await axiosInstance.post(`http://${window.location.hostname}:3001/areasOfInterest`, newItem);
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
+                }
             }
         }
     };
@@ -213,18 +215,20 @@ const AddAreaForm: React.FC = () => {
         }
     };
 
-    const isSaveEnabled = isEditMode
-        ? originalItem &&
-          (localDescription !== (originalItem.description || '') ||
-              parseFloat(localLatitudeTop) !== originalItem.topLeft.latitude ||
-              parseFloat(localLongitudeLeft) !== originalItem.topLeft.longitude ||
-              parseFloat(localLatitudeBottom) !== originalItem.bottomRight.latitude ||
-              parseFloat(localLongitudeRight) !== originalItem.bottomRight.longitude)
-        : localDescription.trim() !== '' &&
-          localLatitudeTop.trim() !== '' &&
-          localLongitudeLeft.trim() !== '' &&
-          localLatitudeBottom.trim() !== '' &&
-          localLongitudeRight.trim() !== '';
+    const isSaveEnabled =
+        localDescription.trim() !== '' &&
+        localLatitudeTop.trim() !== '' &&
+        localLongitudeLeft.trim() !== '' &&
+        localLatitudeBottom.trim() !== '' &&
+        localLongitudeRight.trim() !== '' &&
+        (isEditMode
+            ? originalItem &&
+              (localDescription !== (originalItem.description || '') ||
+                  parseFloat(localLatitudeTop) !== originalItem.topLeft.latitude ||
+                  parseFloat(localLongitudeLeft) !== originalItem.topLeft.longitude ||
+                  parseFloat(localLatitudeBottom) !== originalItem.bottomRight.latitude ||
+                  parseFloat(localLongitudeRight) !== originalItem.bottomRight.longitude)
+            : true);
 
     return (
         <div className="w-full">

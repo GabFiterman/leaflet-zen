@@ -78,31 +78,31 @@ const ListItem: React.FC<ItemsProps> = ({ itemInfo, endpoint, onDeleteClick }) =
     const onDeleteClickHandler = (e: React.MouseEvent) => {
         e.stopPropagation();
         confirmDialog('Você realmente deseja deletar este item?', async () => {
+            if (endpoint === 'areasOfInterest') {
+                dispatch(removeAreaOfInterest(numericId));
+                dispatch(clearAreaOfInterest());
+                dispatch(setSelectAreaOfInterest(null as any));
+            } else if (endpoint === 'pointsOfInterest') {
+                dispatch(removePointOfInterest(numericId));
+                dispatch(clearPointOfInterest());
+                dispatch(setSelectPointOfInterest(null as any));
+            } else if (endpoint === 'perimetersAttention') {
+                dispatch(removePerimeterAttention(numericId));
+                dispatch(clearPerimetersAttention());
+                dispatch(setSelectPerimeterAttention(null as any));
+            }
+
+            if (isSelected) {
+                dispatch(setFormType('InitialForm'));
+            }
+            if (onDeleteClick) {
+                onDeleteClick();
+            }
+
             try {
                 await axios.delete(`http://${window.location.hostname}:3001/${endpoint}/${numericId}`);
-
-                if (endpoint === 'areasOfInterest') {
-                    dispatch(removeAreaOfInterest(numericId));
-                    dispatch(clearAreaOfInterest());
-                    dispatch(setSelectAreaOfInterest(null as any));
-                } else if (endpoint === 'pointsOfInterest') {
-                    dispatch(removePointOfInterest(numericId));
-                    dispatch(clearPointOfInterest());
-                    dispatch(setSelectPointOfInterest(null as any));
-                } else if (endpoint === 'perimetersAttention') {
-                    dispatch(removePerimeterAttention(numericId));
-                    dispatch(clearPerimetersAttention());
-                    dispatch(setSelectPerimeterAttention(null as any));
-                }
-
-                if (isSelected) {
-                    dispatch(setFormType('InitialForm'));
-                }
-                if (onDeleteClick) {
-                    onDeleteClick();
-                }
             } catch (error) {
-                console.error('Erro ao deletar o item:', error);
+                console.warn('API is offline, data deleted only in LocalStorage.', error);
             }
         });
     };

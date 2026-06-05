@@ -61,13 +61,14 @@ const InitialForm: React.FC = () => {
                 zoomLevel: parseInt(localZoomLevel),
             };
 
+            dispatch(updateInitialPosition(newItem));
+            alertDialog('Posição inicial atualizada com sucesso!');
+
             try {
                 const endpoint = '/initialPosition';
                 await axios.post(`http://${window.location.hostname}:3001${endpoint}`, newItem);
-                dispatch(updateInitialPosition(newItem));
-                alertDialog('Posição inicial atualizada com sucesso!');
             } catch (error) {
-                console.error('Error adding item:', error);
+                console.warn('API is offline, data saved only in LocalStorage.', error);
             }
         }
     };

@@ -6,11 +6,19 @@
     },
     "pointsOfInterest": [
         {
-            "id": 170089323984736,
-            "description": "Centro BSB",
-            "latitude": -15.793938186424075,
-            "longitude": -47.881895799380764,
-            "zoomLevel": 12,
+            "id": 17806240593690,
+            "description": "Setor Marista",
+            "latitude": -16.69912904263183,
+            "longitude": -49.263306005645056,
+            "zoomLevel": 14,
+            "type": "pointOfInterest"
+        },
+        {
+            "id": 178062408210460,
+            "description": "Aparecida de Goiânia",
+            "latitude": -16.822795900373713,
+            "longitude": -49.24570708659827,
+            "zoomLevel": 15,
             "type": "pointOfInterest"
         }
     ],

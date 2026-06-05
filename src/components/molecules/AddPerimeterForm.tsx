@@ -127,48 +127,51 @@ const AddPerimeterForm: React.FC = () => {
 
     const handleSavePerimeterAttention = async () => {
         if (localLatitude.trim() !== '' && localLongitude.trim() !== '' && localRadius.trim() !== '') {
-            try {
-                if (isEditMode) {
-                    const updatedItem = {
-                        id: selectedPerimeterAttention.id,
-                        description: localDescription,
-                        center: {
-                            latitude: parseFloat(localLatitude),
-                            longitude: parseFloat(localLongitude),
-                        },
-                        radius: parseFloat(localRadius),
-                        type: 'perimeterAttention',
-                    };
+            if (isEditMode) {
+                const updatedItem = {
+                    id: selectedPerimeterAttention.id,
+                    description: localDescription,
+                    center: {
+                        latitude: parseFloat(localLatitude),
+                        longitude: parseFloat(localLongitude),
+                    },
+                    radius: parseFloat(localRadius),
+                    type: 'perimeterAttention',
+                };
+                dispatch(updatePerimeterAttention(updatedItem));
+                alertDialog('Perímetro atualizado com sucesso!');
+
+                try {
                     await axiosInstance.put(
                         `http://${window.location.hostname}:3001/perimetersAttention/${selectedPerimeterAttention.id}`,
                         updatedItem,
                     );
-                    dispatch(updatePerimeterAttention(updatedItem));
-                    alertDialog('Perímetro atualizado com sucesso!');
-                } else {
-                    const newPerimeterAttention = {
-                        id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
-                        description: localDescription,
-                        center: {
-                            latitude: parseFloat(localLatitude),
-                            longitude: parseFloat(localLongitude),
-                        },
-                        radius: parseFloat(localRadius),
-                        type: 'perimeterAttention',
-                    };
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
+                }
+            } else {
+                const newPerimeterAttention = {
+                    id: parseInt(Date.now().toString() + Math.floor(Math.random() * 100).toString()),
+                    description: localDescription,
+                    center: {
+                        latitude: parseFloat(localLatitude),
+                        longitude: parseFloat(localLongitude),
+                    },
+                    radius: parseFloat(localRadius),
+                    type: 'perimeterAttention',
+                };
+                dispatch(addPerimeterAttention(newPerimeterAttention));
+                alertDialog('Novo perímetro adicionado com sucesso!');
+                dispatch(setSelectPerimeterAttention(newPerimeterAttention));
+
+                try {
                     await axiosInstance.post(
                         `http://${window.location.hostname}:3001/perimetersAttention`,
                         newPerimeterAttention,
                     );
-                    dispatch(addPerimeterAttention(newPerimeterAttention));
-                    alertDialog('Novo perímetro adicionado com sucesso!');
-                    setLocalDescription('');
-                    setLocalLatitude('');
-                    setLocalLongitude('');
-                    setLocalRadius('');
+                } catch (error) {
+                    console.warn('API is offline, data saved only in LocalStorage.', error);
                 }
-            } catch (error) {
-                console.error('Error saving item:', error);
             }
         }
     };
@@ -185,16 +188,18 @@ const AddPerimeterForm: React.FC = () => {
         }
     };
 
-    const isSaveEnabled = isEditMode
-        ? originalItem &&
-          (localDescription !== (originalItem.description || '') ||
-              parseFloat(localLatitude) !== originalItem.center?.latitude ||
-              parseFloat(localLongitude) !== originalItem.center?.longitude ||
-              parseFloat(localRadius) !== originalItem.radius)
-        : localDescription.trim() !== '' &&
-          localLatitude.trim() !== '' &&
-          localLongitude.trim() !== '' &&
-          localRadius.trim() !== '';
+    const isSaveEnabled =
+        localDescription.trim() !== '' &&
+        localLatitude.trim() !== '' &&
+        localLongitude.trim() !== '' &&
+        localRadius.trim() !== '' &&
+        (isEditMode
+            ? originalItem &&
+              (localDescription !== (originalItem.description || '') ||
+                  parseFloat(localLatitude) !== originalItem.center?.latitude ||
+                  parseFloat(localLongitude) !== originalItem.center?.longitude ||
+                  parseFloat(localRadius) !== originalItem.radius)
+            : true);
 
     return (
         <div className="w-full">
