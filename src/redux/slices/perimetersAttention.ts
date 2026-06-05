@@ -18,6 +18,7 @@ interface PerimeterAttentionState {
     perimetersAttention: perimeterAttention[];
     selectedPerimeterAttention?: SelectedPerimeterAttentionState | null;
     showPerimeterAttention?: any;
+    hiddenPerimeters: number[];
 }
 
 type SelectedPerimeterAttentionState = {
@@ -50,6 +51,7 @@ const savePerimetersState = (perimeters: perimeterAttention[]) => {
 
 const initialState: PerimeterAttentionState = {
     perimetersAttention: loadPerimetersState(),
+    hiddenPerimeters: [],
 };
 
 const perimetersAttentionSlice = createSlice({
@@ -61,6 +63,24 @@ const perimetersAttentionSlice = createSlice({
         },
         setSelectPerimeterAttention: (state, action: PayloadAction<SelectedPerimeterAttentionState>) => {
             state.selectedPerimeterAttention = action.payload;
+            if (action.payload && (action.payload as any).id) {
+                const id = (action.payload as any).id;
+                if (!state.hiddenPerimeters) {
+                    state.hiddenPerimeters = [];
+                }
+                state.hiddenPerimeters = state.hiddenPerimeters.filter((pId) => pId !== id);
+            }
+        },
+        togglePerimeterVisibility: (state, action: PayloadAction<number>) => {
+            if (!state.hiddenPerimeters) {
+                state.hiddenPerimeters = [];
+            }
+            const id = action.payload;
+            if (state.hiddenPerimeters.includes(id)) {
+                state.hiddenPerimeters = state.hiddenPerimeters.filter((pId) => pId !== id);
+            } else {
+                state.hiddenPerimeters.push(id);
+            }
         },
         addperimetersAttention: (state, action: PayloadAction<perimeterAttention[]>) => {
             state.perimetersAttention.push(...action.payload);
@@ -83,6 +103,22 @@ const perimetersAttentionSlice = createSlice({
                 state.showPerimeterAttention = null;
             }
         },
+        updatePerimeterAttention: (state, action: PayloadAction<perimeterAttention>) => {
+            const index = state.perimetersAttention.findIndex((perimeter) => perimeter.id === action.payload.id);
+            if (index !== -1) {
+                state.perimetersAttention[index] = action.payload;
+                savePerimetersState(state.perimetersAttention);
+            }
+            if (state.showPerimeterAttention && state.showPerimeterAttention.id === action.payload.id) {
+                state.showPerimeterAttention = action.payload;
+            }
+            if (
+                state.selectedPerimeterAttention &&
+                (state.selectedPerimeterAttention as any).id === action.payload.id
+            ) {
+                state.selectedPerimeterAttention = action.payload as any;
+            }
+        },
     },
 });
 
@@ -93,5 +129,7 @@ export const {
     removePerimeterAttention,
     setSelectPerimeterAttention,
     showPerimetersAttention,
+    updatePerimeterAttention,
+    togglePerimeterVisibility,
 } = perimetersAttentionSlice.actions;
 export default perimetersAttentionSlice.reducer;

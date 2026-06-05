@@ -18,6 +18,7 @@ interface AreaOfInterestState {
     areasOfInterest: AreaOfInterest[];
     selectedAreaOfInterest?: SelectedAreaOfInterestState | null;
     showAreaOfInterest?: any;
+    hiddenAreas: number[];
 }
 
 type SelectedAreaOfInterestState = {
@@ -50,6 +51,7 @@ const saveAreasState = (areas: AreaOfInterest[]) => {
 
 const initialState: AreaOfInterestState = {
     areasOfInterest: loadAreasState(),
+    hiddenAreas: [],
 };
 
 const areasOfInterestSlice = createSlice({
@@ -61,6 +63,24 @@ const areasOfInterestSlice = createSlice({
         },
         setSelectAreaOfInterest: (state, action: PayloadAction<SelectedAreaOfInterestState>) => {
             state.selectedAreaOfInterest = action.payload;
+            if (action.payload && (action.payload as any).id) {
+                const id = (action.payload as any).id;
+                if (!state.hiddenAreas) {
+                    state.hiddenAreas = [];
+                }
+                state.hiddenAreas = state.hiddenAreas.filter((aId) => aId !== id);
+            }
+        },
+        toggleAreaVisibility: (state, action: PayloadAction<number>) => {
+            if (!state.hiddenAreas) {
+                state.hiddenAreas = [];
+            }
+            const id = action.payload;
+            if (state.hiddenAreas.includes(id)) {
+                state.hiddenAreas = state.hiddenAreas.filter((aId) => aId !== id);
+            } else {
+                state.hiddenAreas.push(id);
+            }
         },
         clearAreaOfInterest: (state) => {
             state.showAreaOfInterest = null;
@@ -82,6 +102,19 @@ const areasOfInterestSlice = createSlice({
                 state.showAreaOfInterest = null;
             }
         },
+        updateAreaOfInterest: (state, action: PayloadAction<AreaOfInterest>) => {
+            const index = state.areasOfInterest.findIndex((area) => area.id === action.payload.id);
+            if (index !== -1) {
+                state.areasOfInterest[index] = action.payload;
+                saveAreasState(state.areasOfInterest);
+            }
+            if (state.showAreaOfInterest && state.showAreaOfInterest.id === action.payload.id) {
+                state.showAreaOfInterest = action.payload;
+            }
+            if (state.selectedAreaOfInterest && (state.selectedAreaOfInterest as any).id === action.payload.id) {
+                state.selectedAreaOfInterest = action.payload as any;
+            }
+        },
     },
 });
 
@@ -92,5 +125,7 @@ export const {
     removeAreaOfInterest,
     setSelectAreaOfInterest,
     showAreaOfInterest,
+    updateAreaOfInterest,
+    toggleAreaVisibility,
 } = areasOfInterestSlice.actions;
 export default areasOfInterestSlice.reducer;

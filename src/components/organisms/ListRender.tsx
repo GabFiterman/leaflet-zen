@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React from 'react';
 import ItemList from '../molecules/ItemList';
 
 interface Item {
@@ -13,25 +13,11 @@ interface ListRendererProps {
     endpoint: string;
 }
 
-const ListRenderer: React.FC<ListRendererProps> = ({ data: initialData, endpoint }) => {
-    const [data, setData] = useState(initialData);
-    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-
-    const handleItemDelete = (itemId: number) => {
-        setData((prevData) => prevData.filter((item) => item.id !== itemId));
-    };
-
+const ListRenderer: React.FC<ListRendererProps> = ({ data, endpoint }) => {
     return (
         <div className="w-full">
             {data.map((item) => (
-                <ItemList
-                    key={item.id}
-                    endpoint={endpoint}
-                    itemInfo={{ ...item, description: item.description }}
-                    onDeleteClick={() => handleItemDelete(item.id)}
-                    setSelectedItemId={setSelectedItemId}
-                    selectedItemId={selectedItemId}
-                />
+                <ItemList key={item.id} endpoint={endpoint} itemInfo={item} />
             ))}
         </div>
     );

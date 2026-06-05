@@ -17,7 +17,7 @@ const DataFetcher: React.FC = () => {
 
     const fetchData = async (endpoint: string, action: Function) => {
         try {
-            const response = await axios.get<any>(`http://localhost:3001${endpoint}`);
+            const response = await axios.get<any>(`http://${window.location.hostname}:3001${endpoint}`);
             dispatch(action(response.data));
         } catch (error) {
             console.error('Error fetching data:', error);

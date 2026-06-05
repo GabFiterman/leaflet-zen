@@ -6,11 +6,15 @@ import './index.css';
 import App from './components/templates/AppTemplate';
 import reportWebVitals from './reportWebVitals';
 
+import { DialogProvider } from './context/DialogContext';
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
     // <React.StrictMode>
     <Provider store={store}>
-        <App />
+        <DialogProvider>
+            <App />
+        </DialogProvider>
     </Provider>,
     // </React.StrictMode>
 );
